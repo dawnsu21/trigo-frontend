@@ -1,0 +1,57 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
+import '../../styles/forms.css'
+
+const defaultForm = { email: '', password: '' }
+
+export default function DriverLogin() {
+  const [form, setForm] = useState(defaultForm)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
+  const { login } = useAuth()
+
+  const handleChange = (event) => {
+    const { name, value } = event.target
+    setForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    setError('')
+    setLoading(true)
+    try {
+      await login(form)
+      navigate('/driver/dashboard')
+    } catch (err) {
+      setError(err?.data?.message || 'Unable to sign in')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <section className="auth-card">
+      <h2>Driver Login</h2>
+      <p>Sign in to manage your driving profile.</p>
+
+      {error && <div className="alert alert--error">{error}</div>}
+
+      <form className="form" onSubmit={handleSubmit}>
+        <label>
+          Email
+          <input name="email" type="email" value={form.email} onChange={handleChange} required />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" value={form.password} onChange={handleChange} required />
+        </label>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Signing in...' : 'Sign In'}
+        </button>
+      </form>
+    </section>
+  )
+}
+
