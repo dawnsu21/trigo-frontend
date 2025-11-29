@@ -23,7 +23,8 @@
   gap: 0.35rem;
 }
 
-.form input, .form select {
+.form input,
+.form select {
   border: 1px solid #cbd5f5;
   border-radius: 0.75rem;
   padding: 0.65rem 0.85rem;
@@ -69,3 +70,34 @@
   text-align: center;
 }
 
+.form__section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.form__section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.form__section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1e293b;
+}
+
+.form label small {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  font-weight: normal;
+}
+
+.form input::placeholder {
+  color: #94a3b8;
+  opacity: 0.7;
+}

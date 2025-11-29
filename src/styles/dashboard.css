@@ -69,11 +69,29 @@
 
 .table__head, .table__row {
   display: grid;
+<<<<<<< HEAD
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+=======
   grid-template-columns: repeat(4, minmax(0, 1fr));
+>>>>>>> 9b9f3ee6142bd812f14289d1381edb0c680c3406
   gap: 1rem;
   padding: 0.75rem 0;
 }
 
+<<<<<<< HEAD
+/* For tables with specific column counts */
+.table--5cols .table__head,
+.table--5cols .table__row {
+  grid-template-columns: 80px 1fr 1fr 120px 100px 120px;
+}
+
+.table--4cols .table__head,
+.table--4cols .table__row {
+  grid-template-columns: 80px 1fr 120px 100px 120px;
+}
+
+=======
+>>>>>>> 9b9f3ee6142bd812f14289d1381edb0c680c3406
 .table__head {
   font-weight: 700;
   border-bottom: 1px solid #e2e8f0;
@@ -104,3 +122,115 @@
   gap: 0.5rem;
 }
 
+<<<<<<< HEAD
+/* Status badges */
+.status {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status--accepted {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.status--picked-up,
+.status--picked_up {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status--completed,
+.status--complete {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status--cancelled,
+.status--canceled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status--approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status--rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.status--pending-approval {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.text-muted {
+  color: #6b7280;
+  font-style: italic;
+}
+
+.text-success {
+  color: #065f46;
+}
+
+.panel__description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+}
+
+.panel__empty {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+}
+
+.panel__empty p {
+  margin: 0.5rem 0;
+}
+
+.form__section {
+  margin-bottom: 1.5rem;
+}
+
+.form__section h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #1e293b;
+}
+
+.form label small {
+  display: block;
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.alert {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.alert--error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+=======
+>>>>>>> 9b9f3ee6142bd812f14289d1381edb0c680c3406
