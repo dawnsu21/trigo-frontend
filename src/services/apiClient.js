@@ -15,6 +15,7 @@ export async function apiRequest(path, { method = 'GET', body, token, headers, .
     mergedHeaders.Authorization = `Bearer ${token}`
   }
 
+<<<<<<< HEAD
   const url = `${API_BASE_URL}${path}`
   console.log(`[API] ${method} ${url}`, { body, headers: mergedHeaders })
   
@@ -57,6 +58,29 @@ export async function apiRequest(path, { method = 'GET', body, token, headers, .
   }
 
   console.log(`[API] Request successful:`, payload)
+=======
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method,
+    headers: mergedHeaders,
+    body: body ? JSON.stringify(body) : undefined,
+    ...rest,
+  })
+
+  let payload = null
+  try {
+    payload = await response.json()
+  } catch {
+    // no body available
+  }
+
+  if (!response.ok) {
+    const error = new Error(payload?.message || 'Request failed')
+    error.status = response.status
+    error.data = payload
+    throw error
+  }
+
+>>>>>>> 9b9f3ee6142bd812f14289d1381edb0c680c3406
   return payload
 }
 

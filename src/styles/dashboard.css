@@ -69,11 +69,16 @@
 
 .table__head, .table__row {
   display: grid;
+<<<<<<< HEAD
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+=======
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+>>>>>>> 9b9f3ee6142bd812f14289d1381edb0c680c3406
   gap: 1rem;
   padding: 0.75rem 0;
 }
 
+<<<<<<< HEAD
 /* For tables with specific column counts */
 .table--5cols .table__head,
 .table--5cols .table__row {
@@ -85,6 +90,8 @@
   grid-template-columns: 80px 1fr 120px 100px 120px;
 }
 
+=======
+>>>>>>> 9b9f3ee6142bd812f14289d1381edb0c680c3406
 .table__head {
   font-weight: 700;
   border-bottom: 1px solid #e2e8f0;
@@ -115,6 +122,7 @@
   gap: 0.5rem;
 }
 
+<<<<<<< HEAD
 /* Status badges */
 .status {
   display: inline-block;
@@ -224,3 +232,5 @@
   border: 1px solid #fecaca;
 }
 
+=======
+>>>>>>> 9b9f3ee6142bd812f14289d1381edb0c680c3406
