@@ -15,9 +15,12 @@ export async function apiRequest(path, { method = 'GET', body, token, headers, .
     mergedHeaders.Authorization = `Bearer ${token}`
   }
 
-<<<<<<< HEAD
   const url = `${API_BASE_URL}${path}`
-  console.log(`[API] ${method} ${url}`, { body, headers: mergedHeaders })
+  // Log request details (hide sensitive data like passwords)
+  const logBody = body && typeof body === 'object' 
+    ? { ...body, password: body.password ? '***hidden***' : undefined }
+    : body
+  console.log(`[API] ${method} ${url}`, { body: logBody, headers: { ...mergedHeaders, Authorization: mergedHeaders.Authorization ? 'Bearer ***' : undefined } })
   
   let response
   try {
@@ -49,38 +52,36 @@ export async function apiRequest(path, { method = 'GET', body, token, headers, .
   }
 
   if (!response.ok) {
-    const errorMessage = payload?.message || payload?.error || payload?.data?.message || `Request failed with status ${response.status}`
+    // Extract error message from various possible formats
+    const errorMessage = 
+      payload?.message || 
+      payload?.error || 
+      payload?.data?.message || 
+      payload?.errors?.email?.[0] ||
+      payload?.errors?.password?.[0] ||
+      (typeof payload?.errors === 'object' ? JSON.stringify(payload.errors) : null) ||
+      `Request failed with status ${response.status}`
+    
     const error = new Error(errorMessage)
     error.status = response.status
     error.data = payload
-    console.error(`[API] Request failed:`, { status: response.status, payload, errorMessage })
+    
+    // Enhanced error logging
+    console.error(`[API] Request failed:`, {
+      status: response.status,
+      statusText: response.statusText,
+      url: url,
+      method: method,
+      errorMessage: errorMessage,
+      payload: payload,
+      errors: payload?.errors,
+      fullResponse: payload
+    })
+    
     throw error
   }
 
   console.log(`[API] Request successful:`, payload)
-=======
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method,
-    headers: mergedHeaders,
-    body: body ? JSON.stringify(body) : undefined,
-    ...rest,
-  })
-
-  let payload = null
-  try {
-    payload = await response.json()
-  } catch {
-    // no body available
-  }
-
-  if (!response.ok) {
-    const error = new Error(payload?.message || 'Request failed')
-    error.status = response.status
-    error.data = payload
-    throw error
-  }
-
->>>>>>> 9b9f3ee6142bd812f14289d1381edb0c680c3406
   return payload
 }
 

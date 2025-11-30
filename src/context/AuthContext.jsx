@@ -63,12 +63,20 @@ export function AuthProvider({ children }) {
         console.log("[Auth] Login successful, token saved");
         return { ...data, role }; // Ensure role is included in return value
       } catch (error) {
-        console.error("[Auth] Login failed:", {
+        // Enhanced error logging for login failures
+        const errorDetails = {
           message: error.message,
           status: error.status,
           data: error.data,
-          fullError: error,
-        });
+          errors: error.data?.errors,
+          emailError: error.data?.errors?.email,
+          passwordError: error.data?.errors?.password,
+          backendMessage: error.data?.message,
+        };
+        
+        console.error("[Auth] Login failed - Full details:", errorDetails);
+        console.error("[Auth] Backend response payload:", error.data);
+        
         // Re-throw the error so components can handle it
         throw error;
       } finally {
@@ -95,14 +103,10 @@ export function AuthProvider({ children }) {
   }, [token, persistAuth]);
 
   const registerPassenger = useCallback(async (form) => {
-    const payload = {
-      ...form,
-      role: "passenger",
-    };
-    console.log("[Auth] Registering passenger with role:", payload.role);
-    return apiRequest("/api/register", {
+    console.log("[Auth] Registering passenger");
+    return apiRequest("/api/register/passenger", {
       method: "POST",
-      body: payload,
+      body: form,
     });
   }, []);
 
@@ -162,7 +166,7 @@ export function AuthProvider({ children }) {
     });
 
     try {
-      const response = await apiRequest("/api/register", {
+      const response = await apiRequest("/api/register/driver", {
         method: "POST",
         body: payload,
       });

@@ -34,13 +34,23 @@ export default function LandingPage() {
       // Navigate to appropriate dashboard based on user role
       navigateToDashboard(data?.role, navigate);
     } catch (err) {
+      // Extract more detailed error message
       const errorMessage =
+        err?.data?.errors?.email?.[0] ||
+        err?.data?.errors?.password?.[0] ||
         err?.data?.message ||
         err?.message ||
         err?.data?.error ||
         "Unable to sign in. Please check your credentials.";
       setError(errorMessage);
-      console.error("Login error:", err);
+      
+      // Log full error details for debugging
+      console.error("Login error details:", {
+        message: err?.message,
+        status: err?.status,
+        data: err?.data,
+        errors: err?.data?.errors,
+      });
     } finally {
       setLoading(false);
     }

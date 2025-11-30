@@ -6,6 +6,18 @@ import {
   fetchAdminRides,
   updateDriverStatus,
 } from "../../services/adminService";
+// Emergency and Announcement management - will be used when UI sections are added
+// import {
+//   fetchEmergencies,
+//   acknowledgeEmergency,
+//   resolveEmergency,
+// } from "../../services/emergencyService";
+// import {
+//   fetchAdminAnnouncements,
+//   createAnnouncement,
+//   updateAnnouncement,
+//   deleteAnnouncement,
+// } from "../../services/announcementService";
 import "../../styles/dashboard.css";
 
 export default function AdminDashboard() {
@@ -17,20 +29,45 @@ export default function AdminDashboard() {
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
   const [loading, setLoading] = useState(true);
+  // Emergency and Announcement state - ready for UI implementation
+  // Uncomment when adding the UI sections (see REMAINING_FRONTEND_WORK.md)
+  // const [emergencies, setEmergencies] = useState([]);
+  // const [announcements, setAnnouncements] = useState([]);
+  // const [showEmergencies, setShowEmergencies] = useState(false);
+  // const [showAnnouncements, setShowAnnouncements] = useState(false);
+  // const [emergencyFilters, setEmergencyFilters] = useState({ status: "pending" });
+  // const [announcementForm, setAnnouncementForm] = useState(null);
 
   console.log("[AdminDashboard] Component rendered", { token: !!token, user });
 
   const loadStats = useCallback(async () => {
     try {
       console.log("[AdminDashboard] Loading stats...");
-      const data = await fetchAdminDashboard(token);
-      console.log("[AdminDashboard] Stats loaded:", data);
-      setStats(data);
+      const response = await fetchAdminDashboard(token);
+      console.log("[AdminDashboard] Raw response:", response);
+      
+      // Handle different response formats
+      // Option 1: Direct stats object { passengers: 1, drivers: 1, ... }
+      // Option 2: Wrapped in data key { data: { passengers: 1, drivers: 1, ... } }
+      // Option 3: Stats nested { stats: { passengers: 1, drivers: 1, ... } }
+      const statsData = response?.data || response?.stats || response || {};
+      
+      console.log("[AdminDashboard] Parsed stats:", statsData);
+      console.log("[AdminDashboard] Stats values:", {
+        passengers: statsData.passengers,
+        drivers: statsData.drivers,
+        active_rides: statsData.active_rides,
+        today_revenue: statsData.today_revenue,
+      });
+      
+      setStats(statsData);
     } catch (err) {
       console.error("[AdminDashboard] Error loading stats:", err);
       setError(
         err?.message || err?.data?.message || "Unable to load dashboard stats"
       );
+      // Set empty stats on error so UI doesn't break
+      setStats({ passengers: 0, drivers: 0, active_rides: 0, today_revenue: 0 });
     }
   }, [token]);
 
@@ -83,8 +120,8 @@ export default function AdminDashboard() {
     setSuccess("");
     try {
       await updateDriverStatus(token, driverId, status);
-      // Reload drivers to show updated status
-      await loadDrivers();
+      // Reload drivers and stats to show updated status and counts
+      await Promise.all([loadDrivers(), loadStats()]);
       setSuccess(
         `Driver ${
           status === "approved" ? "approved" : "rejected"
@@ -147,30 +184,35 @@ export default function AdminDashboard() {
 
       <section className="dashboard__grid">
         <article className="panel">
-          <h3>Platform Statistics</h3>
-          <p className="panel__description">
-            Overview of your TriGo platform activity
-          </p>
+          <div className="panel__header">
+            <div>
+              <h3>Platform Statistics</h3>
+              <p className="panel__description">
+                Overview of your TriGo platform activity
+              </p>
+            </div>
+            <button className="secondary" onClick={loadStats}>
+              Refresh Stats
+            </button>
+          </div>
           <dl className="details">
             <div>
               <dt>Total Passengers</dt>
-              <dd>{stats?.passengers || 0}</dd>
+              <dd>{stats?.passengers ?? stats?.total_passengers ?? stats?.passenger_count ?? 0}</dd>
             </div>
             <div>
               <dt>Total Drivers</dt>
-              <dd>{stats?.drivers || 0}</dd>
+              <dd>{stats?.drivers ?? stats?.total_drivers ?? stats?.driver_count ?? 0}</dd>
             </div>
             <div>
               <dt>Active Rides</dt>
-              <dd>{stats?.active_rides || 0}</dd>
+              <dd>{stats?.active_rides ?? stats?.active_ride_count ?? stats?.rides_active ?? 0}</dd>
             </div>
             <div>
               <dt>Today's Revenue</dt>
               <dd>
                 ₱
-                {stats?.today_revenue
-                  ? parseFloat(stats.today_revenue).toFixed(2)
-                  : "0.00"}
+                {(stats?.today_revenue ?? stats?.revenue_today ?? stats?.today_revenue_amount ?? 0).toFixed(2)}
               </dd>
             </div>
           </dl>
