@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { fetchPlaces, searchPlaces } from '../services/placesService'
 
 /**
@@ -20,6 +20,8 @@ export default function PlaceSelector({
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [selectedPlace, setSelectedPlace] = useState(null)
+  const dropdownRef = useRef(null)
+  const inputRef = useRef(null)
 
   useEffect(() => {
     loadPlaces()
@@ -72,6 +74,10 @@ export default function PlaceSelector({
     })
     setIsOpen(false)
     setSearchQuery('')
+    // Focus back to input to prevent blur issues
+    if (inputRef.current) {
+      inputRef.current.blur()
+    }
   }
 
   const handleClear = () => {
@@ -83,7 +89,36 @@ export default function PlaceSelector({
       }
     })
     setIsOpen(true)
+    setSearchQuery('')
+    // Focus the input after clearing
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+    }, 100)
   }
+
+  // Handle clicks outside the dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
+      ) {
+        setIsOpen(false)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isOpen])
 
   return (
     <div className="place-selector" style={{ position: 'relative' }}>
@@ -128,7 +163,7 @@ export default function PlaceSelector({
           <button
             type="button"
             onClick={handleClear}
-            className="secondary"
+            className="secondary change-location-button"
             style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
           >
             Change Location
@@ -137,11 +172,11 @@ export default function PlaceSelector({
       ) : (
         <div className="place-selector__input-wrapper" style={{ position: 'relative', marginTop: '0.5rem' }}>
           <input
+            ref={inputRef}
             type="text"
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
             onFocus={() => setIsOpen(true)}
-            onBlur={() => setTimeout(() => setIsOpen(false), 200)}
             placeholder={placeholder}
             required={required}
             style={{
@@ -155,6 +190,7 @@ export default function PlaceSelector({
           
           {isOpen && (
             <div 
+              ref={dropdownRef}
               className="place-selector__dropdown"
               style={{
                 position: 'absolute',
@@ -169,6 +205,10 @@ export default function PlaceSelector({
                 overflowY: 'auto',
                 zIndex: 1000,
                 boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+              }}
+              onMouseDown={(e) => {
+                // Prevent input from losing focus when clicking dropdown
+                e.preventDefault()
               }}
             >
               {loading && (
@@ -186,7 +226,10 @@ export default function PlaceSelector({
               {!loading && places.map((place) => (
                 <div
                   key={place.id}
-                  onClick={() => handleSelect(place)}
+                  onMouseDown={(e) => {
+                    e.preventDefault()
+                    handleSelect(place)
+                  }}
                   style={{
                     padding: '0.75rem',
                     cursor: 'pointer',

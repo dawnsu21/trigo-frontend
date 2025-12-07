@@ -14,6 +14,7 @@ import EmergencyButton from "../../components/EmergencyButton";
 import FeedbackForm from "../../components/FeedbackForm";
 import { fetchAnnouncements } from "../../services/announcementService";
 import "../../styles/dashboard.css";
+import "../../styles/passenger-dashboard.css";
 
 const rideDefaults = {
   pickup_place_id: "",
@@ -36,9 +37,13 @@ export default function PassengerDashboard() {
   const [rideForFeedback, setRideForFeedback] = useState(null);
   const [showDriverSelection, setShowDriverSelection] = useState(false);
   const [pendingRideForm, setPendingRideForm] = useState(null);
-  const [showCurrentRideDetails, setShowCurrentRideDetails] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allHistory, setAllHistory] = useState([]);
+  const [allAnnouncements, setAllAnnouncements] = useState([]);
+  const [filteredHistory, setFilteredHistory] = useState([]);
+  const [filteredAnnouncements, setFilteredAnnouncements] = useState([]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -78,13 +83,9 @@ export default function PassengerDashboard() {
       try {
         const data = await fetchPassengerHistory(token, nextPage);
         // Handle different response formats
-        if (Array.isArray(data)) {
-          setHistory(data);
-        } else if (data?.data) {
-          setHistory(data.data);
-        } else {
-          setHistory([]);
-        }
+        const historyData = Array.isArray(data) ? data : data?.data || [];
+        setHistory(historyData);
+        setAllHistory(historyData); // Store all history for search
         setPage(nextPage);
       } catch (err) {
         setError(
@@ -98,11 +99,59 @@ export default function PassengerDashboard() {
   const loadAnnouncements = useCallback(async () => {
     try {
       const data = await fetchAnnouncements(token);
-      setAnnouncements(Array.isArray(data) ? data : data?.data || []);
+      const announcementsData = Array.isArray(data) ? data : data?.data || [];
+      setAnnouncements(announcementsData);
+      setAllAnnouncements(announcementsData); // Store all announcements for search
     } catch (err) {
       console.error('Failed to load announcements:', err);
     }
   }, [token]);
+
+  // Filter history and announcements based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setFilteredHistory(allHistory);
+      setFilteredAnnouncements(allAnnouncements);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+    
+    // Filter history
+    const filteredHist = allHistory.filter((ride) => {
+      const driverName = (ride.driver?.name || "").toLowerCase();
+      const pickup = (ride.pickup_place?.name || ride.pickup_address || "").toLowerCase();
+      const dropoff = (ride.dropoff_place?.name || ride.dropoff_address || "").toLowerCase();
+      const rideId = String(ride.id || "").toLowerCase();
+      const fare = String(ride.fare || "").toLowerCase();
+      const status = (ride.status || "").toLowerCase();
+      const vehicleType = (ride.driver?.vehicle_type || "").toLowerCase();
+
+      return (
+        driverName.includes(query) ||
+        pickup.includes(query) ||
+        dropoff.includes(query) ||
+        rideId.includes(query) ||
+        fare.includes(query) ||
+        status.includes(query) ||
+        vehicleType.includes(query)
+      );
+    });
+
+    // Filter announcements
+    const filteredAnn = allAnnouncements.filter((announcement) => {
+      const title = (announcement.title || "").toLowerCase();
+      const message = (announcement.message || "").toLowerCase();
+
+      return (
+        title.includes(query) ||
+        message.includes(query)
+      );
+    });
+
+    setFilteredHistory(filteredHist);
+    setFilteredAnnouncements(filteredAnn);
+  }, [searchQuery, allHistory, allAnnouncements]);
 
   useEffect(() => {
     if (token) {
@@ -228,14 +277,20 @@ export default function PassengerDashboard() {
   const canCancelRide = (ride) => {
     if (!ride) return false;
     
-    // Use backend can_cancel flag if available
+    // Use backend can_cancel flag if available (this is the primary check)
     if (ride.hasOwnProperty('can_cancel')) {
       return ride.can_cancel === true;
     }
     
     // Fallback to status check
-    if (!ride.status) return false;
-    const status = typeof ride.status === 'string' ? ride.status.toLowerCase() : ride.status;
+    // If status is null/undefined, assume it might be cancellable (pending state)
+    if (!ride.status || ride.status === null || ride.status === undefined) {
+      // If we don't have status info, allow cancellation attempt
+      // The backend will handle the actual validation
+      return true;
+    }
+    
+    const status = typeof ride.status === 'string' ? ride.status.toLowerCase() : String(ride.status).toLowerCase();
     const cancellableStatuses = ['pending', 'assigned', 'accepted', 'requested'];
     return cancellableStatuses.includes(status);
   };
@@ -304,47 +359,134 @@ export default function PassengerDashboard() {
     }
   };
 
+  // Use filtered data for display
+  const displayHistory = searchQuery.trim() ? filteredHistory : history;
+  const displayAnnouncements = searchQuery.trim() ? filteredAnnouncements : announcements;
+
   return (
-    <div className="dashboard">
-      <header className="dashboard__header">
+    <div className="dashboard passenger-dashboard">
+      <header className="dashboard__header" style={{ 
+        display: "grid", 
+        gridTemplateColumns: "1fr auto 1fr",
+        gap: "1rem",
+        alignItems: "center"
+      }}>
         <div>
           <h2>Passenger Dashboard</h2>
           <p>Welcome back, {user?.name}</p>
         </div>
-        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          {currentRide && (
-            <>
-              <button 
-                onClick={() => setShowCurrentRideDetails(!showCurrentRideDetails)}
-                className={showCurrentRideDetails ? "secondary" : ""}
-                style={{ 
-                  backgroundColor: showCurrentRideDetails ? undefined : 'var(--accent-primary, #3b82f6)',
-                  color: showCurrentRideDetails ? undefined : 'white',
-                  border: showCurrentRideDetails ? undefined : 'none'
-                }}
-              >
-                {showCurrentRideDetails ? "Hide Booking" : "📋 View My Booking"}
-              </button>
+        <div style={{ 
+          display: "flex", 
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.75rem",
+          minWidth: "400px",
+          maxWidth: "700px",
+          width: "100%",
+          position: "relative"
+        }}>
+          <div style={{ position: "relative", flex: 1, width: "100%" }}>
+            {/* Search Icon */}
+            <svg
+              style={{
+                position: "absolute",
+                left: "1rem",
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: "20px",
+                height: "20px",
+                color: "var(--text-secondary)",
+                pointerEvents: "none",
+                zIndex: 1,
+              }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search rides, announcements..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "1rem 1rem 1rem 3rem",
+                paddingRight: searchQuery ? "3rem" : "1rem",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid var(--card-border)",
+                fontSize: "1rem",
+                fontFamily: "inherit",
+                outline: "none",
+                transition: "var(--transition)",
+                backgroundColor: "var(--card-bg)",
+                color: "var(--text-primary)",
+                fontWeight: "400",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "var(--accent-primary)";
+                e.target.style.boxShadow = "0 0 0 3px rgba(59, 130, 246, 0.1)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "var(--card-border)";
+                e.target.style.boxShadow = "none";
+              }}
+            />
+            {searchQuery && (
               <button
-                onClick={handleCancelClick}
-                disabled={loadingRide || !canCancelRide(currentRide)}
-                style={{ 
-                  backgroundColor: canCancelRide(currentRide) ? 'var(--error, #ef4444)' : '#94a3b8',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '0.5rem',
-                  fontWeight: '600',
-                  cursor: (loadingRide || !canCancelRide(currentRide)) ? 'not-allowed' : 'pointer',
-                  whiteSpace: 'nowrap',
-                  opacity: canCancelRide(currentRide) ? 1 : 0.7
+                onClick={() => setSearchQuery("")}
+                style={{
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "0.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text-secondary)",
+                  fontSize: "1.5rem",
+                  lineHeight: 1,
+                  width: "24px",
+                  height: "24px",
+                  borderRadius: "50%",
+                  transition: "var(--transition)",
                 }}
-                title={!canCancelRide(currentRide) ? `Cannot cancel ride. Current status: ${currentRide.status}` : "Cancel this booking"}
+                onMouseEnter={(e) => {
+                  e.target.style.color = "var(--text-primary)";
+                  e.target.style.backgroundColor = "var(--card-border)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = "var(--text-secondary)";
+                  e.target.style.backgroundColor = "transparent";
+                }}
+                title="Clear search"
               >
-                {loadingRide ? "⏳ Cancelling..." : "❌ Cancel Booking"}
+                ×
               </button>
-            </>
+            )}
+          </div>
+          {searchQuery && (
+            <div style={{
+              fontSize: "0.875rem",
+              color: "var(--text-secondary)",
+              whiteSpace: "nowrap",
+              padding: "0.5rem 0",
+              fontWeight: "500",
+            }}>
+              {displayHistory.length + displayAnnouncements.length} result{(displayHistory.length + displayAnnouncements.length) !== 1 ? 's' : ''}
+            </div>
           )}
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', justifyContent: "flex-end" }}>
           <NotificationBell 
             token={token} 
             onNotificationClick={async (notification) => {
@@ -359,17 +501,8 @@ export default function PassengerDashboard() {
                   // NOT if status is just 'assigned' (passenger selected driver, but driver hasn't accepted yet)
                   if (updatedRide && (updatedRide.status === 'accepted' || updatedRide.status === 'picked_up')) {
                     setCurrentRide(updatedRide);
-                    setShowCurrentRideDetails(true);
-                    setSuccess('🎉 Your driver has accepted your ride! Check your booking details below.');
+                    setSuccess('🎉 Your driver has accepted your ride! Check your booking details.');
                     setTimeout(() => setSuccess(''), 5000);
-                    
-                    // Scroll to current ride section after a short delay
-                    setTimeout(() => {
-                      const rideSection = document.querySelector('[data-current-ride-section]');
-                      if (rideSection) {
-                        rideSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
-                    }, 300);
                   } else if (updatedRide && updatedRide.status === 'assigned') {
                     // Status is 'assigned' - driver hasn't accepted yet, so don't show success message
                     // Just update the ride data silently
@@ -383,29 +516,60 @@ export default function PassengerDashboard() {
                 }
               } else if (notification.type === 'driver_on_way') {
                 // Driver is on the way - always show this
-                setShowCurrentRideDetails(true);
                 loadCurrentRide();
                 setSuccess('🚗 Your driver is on the way!');
                 setTimeout(() => setSuccess(''), 5000);
-                
-                setTimeout(() => {
-                  const rideSection = document.querySelector('[data-current-ride-section]');
-                  if (rideSection) {
-                    rideSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }, 300);
               }
             }}
           />
+          {currentRide && (
+            <>
+              <button 
+                onClick={() => navigate('/passenger/view-booking')}
+                style={{ 
+                  backgroundColor: 'var(--accent-primary, #3b82f6)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '0.5rem',
+                  fontWeight: '600',
+                  fontSize: '0.9375rem',
+                  whiteSpace: 'nowrap',
+                  cursor: 'pointer'
+                }}
+              >
+                View My Booking
+              </button>
+            </>
+          )}
           <EmergencyButton token={token} rideId={currentRide?.id} userRole="passenger" />
           <button 
             onClick={() => navigate('/passenger/profile')} 
             className="secondary"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '0.5rem',
+              fontWeight: '600',
+              fontSize: '0.9375rem',
+              whiteSpace: 'nowrap'
+            }}
           >
             👤 Profile
           </button>
-          <button onClick={logout} className="secondary">
+          <button 
+            onClick={logout} 
+            className="secondary"
+            style={{
+              padding: '0.75rem 1.5rem',
+              borderRadius: '0.5rem',
+              fontWeight: '600',
+              fontSize: '0.9375rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
             Logout
           </button>
         </div>
@@ -430,10 +594,10 @@ export default function PassengerDashboard() {
       )}
 
       {/* Announcements */}
-      {announcements.length > 0 && (
+      {displayAnnouncements.length > 0 && (
         <section className="panel" style={{ borderLeft: '4px solid #3b82f6' }}>
           <h3>📢 Announcements</h3>
-          {announcements.map((announcement) => (
+          {displayAnnouncements.map((announcement) => (
             <div key={announcement.id} style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #e2e8f0' }}>
               <h4 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>{announcement.title}</h4>
               <p style={{ margin: 0, color: '#64748b' }}>{announcement.message}</p>
@@ -474,7 +638,7 @@ export default function PassengerDashboard() {
           }}>
             <div className="panel__header">
               <div>
-                <h3>❌ Cancel Ride</h3>
+                <h3>Cancel Ride</h3>
                 <p className="panel__description">
                   Are you sure you want to cancel ride #{currentRide.id}?
                 </p>
@@ -578,404 +742,10 @@ export default function PassengerDashboard() {
         </section>
       )}
 
-      {/* Show Current Ride Details prominently when button is clicked */}
-      {showCurrentRideDetails && currentRide && (
-        <section className="panel" style={{ borderLeft: '4px solid var(--accent-primary, #3b82f6)' }} data-current-ride-section>
-          <div className="panel__header">
-            <div>
-              <h3>📋 My Current Booking</h3>
-              <p className="panel__description">
-                Your active ride details
-              </p>
-            </div>
-            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-              <button
-                onClick={handleCancelClick}
-                disabled={loadingRide || !canCancelRide(currentRide)}
-                style={{ 
-                  backgroundColor: canCancelRide(currentRide) ? 'var(--error, #ef4444)' : '#94a3b8',
-                  color: 'white',
-                  border: 'none',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '0.5rem',
-                  fontWeight: '600',
-                  cursor: (loadingRide || !canCancelRide(currentRide)) ? 'not-allowed' : 'pointer',
-                  opacity: canCancelRide(currentRide) ? 1 : 0.7
-                }}
-                title={!canCancelRide(currentRide) ? `Cannot cancel ride. Current status: ${currentRide.status}` : "Cancel this booking"}
-              >
-                {loadingRide ? "⏳ Cancelling..." : "❌ Cancel Booking"}
-              </button>
-              <button className="secondary" onClick={() => setShowCurrentRideDetails(false)}>
-                Close
-              </button>
-            </div>
-          </div>
-          <dl className="details">
-            <div>
-              <dt>Ride Number</dt>
-              <dd>#{currentRide.id}</dd>
-            </div>
-            <div>
-              <dt>Current Status</dt>
-              <dd>
-                <span
-                  className={`status status--${currentRide.status
-                    ?.toLowerCase()
-                    .replace("_", "-")}`}
-                >
-                  {currentRide.status === "pending" && "Waiting for Driver"}
-                  {currentRide.status === "assigned" && "Waiting for Driver Acceptance"}
-                  {currentRide.status === "accepted" && "Driver Accepted - On the Way"}
-                  {currentRide.status === "picked_up" && "On the Way"}
-                  {currentRide.status === "completed" && "Completed"}
-                  {currentRide.status === "cancelled" && "Cancelled"}
-                  {![
-                    "pending",
-                    "assigned",
-                    "accepted",
-                    "picked_up",
-                    "completed",
-                    "cancelled",
-                  ].includes(currentRide.status) && currentRide.status}
-                </span>
-              </dd>
-            </div>
-            <div>
-              <dt>Your Driver</dt>
-              <dd>
-                {currentRide.status === "assigned" && currentRide.driver ? (
-                  <div>
-                    <strong>{currentRide.driver.name}</strong>
-                    <div style={{ 
-                      marginTop: '0.5rem',
-                      padding: '0.75rem',
-                      backgroundColor: '#fef3c7',
-                      border: '1px solid #fbbf24',
-                      borderRadius: '0.5rem',
-                      color: '#92400e',
-                      fontSize: '0.875rem'
-                    }}>
-                      ⏳ <strong>Waiting for driver to accept...</strong><br />
-                      The driver has been assigned but hasn't accepted yet. You'll be notified when they accept.
-                    </div>
-                  </div>
-                ) : currentRide.status === "accepted" || currentRide.status === "picked_up" ? (
-                  currentRide.driver ? (
-                    <div style={{
-                      padding: '1.5rem',
-                      backgroundColor: '#f8fafc',
-                      border: '2px solid #e2e8f0',
-                      borderRadius: '0.75rem',
-                      marginTop: '0.5rem'
-                    }}>
-                      {/* Driver Header with Status */}
-                      <div style={{ marginBottom: '1.5rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                          <h4 style={{ margin: 0, fontSize: '1.5rem', color: '#0f172a' }}>
-                            👤 {currentRide.driver.name}
-                          </h4>
-                          {currentRide.driver.average_rating && currentRide.driver.average_rating > 0 && (
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '0.5rem',
-                              padding: '0.5rem 0.75rem',
-                              backgroundColor: '#fef3c7',
-                              border: '1px solid #fbbf24',
-                              borderRadius: '0.5rem'
-                            }}>
-                              <span style={{ fontSize: '1.25rem' }}>⭐</span>
-                              <strong style={{ color: '#92400e' }}>
-                                {parseFloat(currentRide.driver.average_rating).toFixed(1)}
-                              </strong>
-                              {currentRide.driver.total_ratings && (
-                                <small style={{ color: '#92400e' }}>
-                                  ({currentRide.driver.total_ratings} {currentRide.driver.total_ratings === 1 ? 'rating' : 'ratings'})
-                                </small>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                        {currentRide.status === "accepted" && (
-                          <div style={{ 
-                            padding: '0.75rem 1rem',
-                            backgroundColor: '#dbeafe',
-                            border: '1px solid #3b82f6',
-                            borderRadius: '0.5rem',
-                            color: '#1e40af',
-                            fontSize: '0.875rem',
-                            fontWeight: '600'
-                          }}>
-                            ✅ Driver Accepted - Heading to Pickup Location
-                          </div>
-                        )}
-                        {currentRide.status === "picked_up" && (
-                          <div style={{ 
-                            padding: '0.75rem 1rem',
-                            backgroundColor: '#dcfce7',
-                            border: '1px solid #10b981',
-                            borderRadius: '0.5rem',
-                            color: '#065f46',
-                            fontSize: '0.875rem',
-                            fontWeight: '600'
-                          }}>
-                            🚗 On the Way to Your Destination
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Contact Information */}
-                      {currentRide.driver.phone && (
-                        <div style={{ 
-                          marginBottom: '1.25rem',
-                          padding: '1rem',
-                          backgroundColor: 'white',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '0.5rem'
-                        }}>
-                          <div style={{ marginBottom: '0.75rem' }}>
-                            <small style={{ display: 'block', marginBottom: '0.25rem', color: '#64748b', fontWeight: '600' }}>
-                              📞 Contact Number
-                            </small>
-                            <strong style={{ fontSize: '1.1rem', color: '#0f172a' }}>{currentRide.driver.phone}</strong>
-                          </div>
-                          <a 
-                            href={`tel:${currentRide.driver.phone.replace(/\s+/g, '')}`}
-                            style={{
-                              display: 'inline-block',
-                              width: '100%',
-                              padding: '0.75rem 1.5rem',
-                              backgroundColor: 'var(--accent-primary, #3b82f6)',
-                              color: 'white',
-                              textDecoration: 'none',
-                              borderRadius: '0.5rem',
-                              fontWeight: '600',
-                              fontSize: '1rem',
-                              textAlign: 'center',
-                              boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)',
-                              transition: 'background-color 0.2s'
-                            }}
-                            onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
-                            onMouseOut={(e) => e.target.style.backgroundColor = 'var(--accent-primary, #3b82f6)'}
-                          >
-                            📞 Call Driver Now
-                          </a>
-                        </div>
-                      )}
-
-                      {/* Vehicle Information */}
-                      {(currentRide.driver.vehicle_type || currentRide.driver.vehicle_make || currentRide.driver.vehicle_model) && (
-                        <div style={{ 
-                          marginBottom: '1.25rem',
-                          padding: '1rem',
-                          backgroundColor: 'white',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '0.5rem'
-                        }}>
-                          <small style={{ display: 'block', marginBottom: '0.75rem', color: '#64748b', fontWeight: '600' }}>
-                            🚗 Vehicle Information
-                          </small>
-                          <div style={{ display: 'grid', gap: '0.5rem' }}>
-                            {currentRide.driver.vehicle_type && (
-                              <div>
-                                <strong style={{ color: '#0f172a' }}>Type:</strong>{' '}
-                                <span style={{ color: '#475569' }}>{currentRide.driver.vehicle_type}</span>
-                              </div>
-                            )}
-                            {(currentRide.driver.vehicle_make || currentRide.driver.vehicle_model) && (
-                              <div>
-                                <strong style={{ color: '#0f172a' }}>Make & Model:</strong>{' '}
-                                <span style={{ color: '#475569' }}>
-                                  {currentRide.driver.vehicle_make || ''} {currentRide.driver.vehicle_model || ''}
-                                </span>
-                              </div>
-                            )}
-                            {currentRide.driver.plate_number && (
-                              <div>
-                                <strong style={{ color: '#0f172a' }}>Plate Number:</strong>{' '}
-                                <span style={{ 
-                                  color: '#475569',
-                                  fontFamily: 'monospace',
-                                  fontSize: '1.1rem',
-                                  fontWeight: '600'
-                                }}>
-                                  {currentRide.driver.plate_number}
-                                </span>
-                              </div>
-                            )}
-                            {currentRide.driver.license_number && (
-                              <div>
-                                <strong style={{ color: '#0f172a' }}>License Number:</strong>{' '}
-                                <span style={{ color: '#475569' }}>{currentRide.driver.license_number}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Driver Location */}
-                      {currentRide.driver.current_place && (
-                        <div style={{ 
-                          padding: '1rem',
-                          backgroundColor: 'white',
-                          border: '1px solid #e2e8f0',
-                          borderRadius: '0.5rem'
-                        }}>
-                          <small style={{ display: 'block', marginBottom: '0.75rem', color: '#64748b', fontWeight: '600' }}>
-                            📍 Driver's Current Location
-                          </small>
-                          <div>
-                            <strong style={{ fontSize: '1.1rem', color: '#0f172a', display: 'block', marginBottom: '0.25rem' }}>
-                              {currentRide.driver.current_place.name}
-                            </strong>
-                            {currentRide.driver.current_place.address && (
-                              <small style={{ color: '#64748b', display: 'block' }}>
-                                {currentRide.driver.current_place.address}
-                              </small>
-                            )}
-                            {currentRide.driver.distance_km && (
-                              <div style={{ 
-                                marginTop: '0.5rem',
-                                padding: '0.5rem',
-                                backgroundColor: '#f0f9ff',
-                                border: '1px solid #bae6fd',
-                                borderRadius: '0.375rem',
-                                display: 'inline-block'
-                              }}>
-                                <small style={{ color: '#0369a1' }}>
-                                  📏 Distance: {parseFloat(currentRide.driver.distance_km).toFixed(1)} km away
-                                </small>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-muted">Driver information loading...</span>
-                  )
-                ) : currentRide.driver ? (
-                  <>
-                    <strong>{currentRide.driver.name}</strong>
-                    {currentRide.driver.phone && (
-                      <>
-                        <br />
-                        <small>Contact: {currentRide.driver.phone}</small>
-                      </>
-                    )}
-                  </>
-                ) : (
-                  <span className="text-muted">
-                    Searching for available driver...
-                  </span>
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Vehicle Type</dt>
-              <dd>
-                {(currentRide.status === "accepted" || currentRide.status === "picked_up") && currentRide.driver?.vehicle_type
-                  ? currentRide.driver.vehicle_type
-                  : currentRide.driver?.vehicle_type || "Not available yet"}
-              </dd>
-            </div>
-            <div>
-              <dt>Estimated Fare</dt>
-              <dd>
-                ₱
-                {currentRide.fare
-                  ? parseFloat(currentRide.fare).toFixed(2)
-                  : "0.00"}
-              </dd>
-            </div>
-            {(currentRide.pickup_address || currentRide.pickup_place) && (
-              <div>
-                <dt>Pickup Location</dt>
-                <dd>
-                  {currentRide.pickup_place?.name ||
-                    currentRide.pickup_address}
-                  {currentRide.pickup_place?.address && (
-                    <>
-                      <br />
-                      <small className="text-muted">
-                        {currentRide.pickup_place.address}
-                      </small>
-                    </>
-                  )}
-                </dd>
-              </div>
-            )}
-            {(currentRide.dropoff_address || currentRide.dropoff_place) && (
-              <div>
-                <dt>Destination</dt>
-                <dd>
-                  {currentRide.dropoff_place?.name ||
-                    currentRide.dropoff_address}
-                  {currentRide.dropoff_place?.address && (
-                    <>
-                      <br />
-                      <small className="text-muted">
-                        {currentRide.dropoff_place.address}
-                      </small>
-                    </>
-                  )}
-                </dd>
-              </div>
-            )}
-          </dl>
-          <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-            <button
-              className="secondary"
-              onClick={loadCurrentRide}
-              disabled={loadingRide}
-            >
-              🔄 Refresh Status
-            </button>
-            {canCancelRide(currentRide) ? (
-              <button
-                onClick={handleCancelClick}
-                disabled={loadingRide}
-                style={{ 
-                  backgroundColor: 'var(--error, #ef4444)',
-                  color: 'white',
-                  border: 'none',
-                  flex: 1,
-                  minWidth: '200px',
-                  padding: '0.75rem 1.5rem',
-                  borderRadius: '0.5rem',
-                  fontWeight: '600',
-                  fontSize: '1rem',
-                  cursor: loadingRide ? 'not-allowed' : 'pointer',
-                  boxShadow: '0 2px 4px rgba(239, 68, 68, 0.2)'
-                }}
-              >
-                {loadingRide ? "⏳ Cancelling..." : "❌ Cancel Booking"}
-              </button>
-            ) : (
-              <div style={{ 
-                flex: 1, 
-                padding: '0.75rem 1.5rem', 
-                textAlign: 'center',
-                color: '#64748b',
-                fontSize: '0.875rem'
-              }}>
-                {currentRide.status === "picked_up" && "Ride is in progress. Cancellation is no longer available."}
-                {currentRide.status === "completed" && "This ride has been completed."}
-                {currentRide.status === "cancelled" && "This ride has been cancelled."}
-                {!["picked_up", "completed", "cancelled"].includes(currentRide.status) && 
-                 !["pending", "assigned", "accepted", "requested"].includes(currentRide.status) && 
-                 `Current status: ${currentRide.status}. Cancellation may not be available.`}
-              </div>
-            )}
-          </div>
-        </section>
-      )}
-
       <section className="dashboard__grid">
         {!showDriverSelection && (
-        <article className="panel">
-          <h3>Book a Ride</h3>
+        <article className="panel floating-panel floating-panel--book-ride">
+          <h3>🚕 Book a Ride</h3>
           <p className="panel__description">
             Select your pickup and drop-off locations in Bulan to request a
             tricycle ride. After selecting locations, you'll be able to choose a driver or let the system find one for you.
@@ -1032,389 +802,237 @@ export default function PassengerDashboard() {
         </article>
         )}
 
-        {!showCurrentRideDetails && (
-        <article className="panel">
+        <article className="panel floating-panel floating-panel--current-ride">
           <div className="panel__header">
             <div>
-              <h3>Current Ride</h3>
+              <h3>🚗 Current Ride</h3>
               <p className="panel__description">
                 Track your active ride in real-time
               </p>
             </div>
-            <button className="secondary" onClick={loadCurrentRide}>
-              Refresh
+            <button className="secondary" onClick={loadCurrentRide} disabled={loadingRide}>
+              {loadingRide ? "Refreshing..." : "Refresh"}
             </button>
           </div>
+          
           {currentRide ? (
-            <>
-              <dl className="details">
-                <div>
-                  <dt>Ride Number</dt>
-                  <dd>#{currentRide.id}</dd>
+            <div className="current-ride-content">
+              {/* Ride Header - Status and ID */}
+              <div className="ride-header">
+                <div className="ride-id-status">
+                  <span className="ride-id">Ride #{currentRide.id}</span>
+                  <span className={`status status--${currentRide.status?.toLowerCase().replace("_", "-")}`}>
+                    {currentRide.status === "pending" && "⏳ Waiting for Driver"}
+                    {currentRide.status === "assigned" && "⏳ Waiting for Acceptance"}
+                    {currentRide.status === "accepted" && "✅ Driver Accepted"}
+                    {currentRide.status === "picked_up" && "🚗 On the Way"}
+                    {currentRide.status === "completed" && "✅ Completed"}
+                    {currentRide.status === "cancelled" && "🚫 Cancelled"}
+                    {!["pending", "assigned", "accepted", "picked_up", "completed", "cancelled"].includes(currentRide.status) && currentRide.status}
+                  </span>
                 </div>
-                <div>
-                  <dt>Current Status</dt>
-                  <dd>
-                    <span
-                      className={`status status--${currentRide.status
-                        ?.toLowerCase()
-                        .replace("_", "-")}`}
-                    >
-                      {currentRide.status === "pending" && "Waiting for Driver"}
-                      {currentRide.status === "assigned" && "Waiting for Driver Acceptance"}
-                      {currentRide.status === "accepted" && "Driver Accepted - On the Way"}
-                      {currentRide.status === "picked_up" && "On the Way"}
-                      {currentRide.status === "completed" && "Completed"}
-                      {currentRide.status === "cancelled" && "Cancelled"}
-                      {![
-                        "pending",
-                        "assigned",
-                        "accepted",
-                        "picked_up",
-                        "completed",
-                        "cancelled",
-                      ].includes(currentRide.status) && currentRide.status}
-                    </span>
-                  </dd>
+                <div className="ride-driver">
+                  <span className="driver-label">Assigned Driver</span>
+                  <span className="driver-name">
+                    {currentRide.driver ? (
+                      <strong>{currentRide.driver.name}</strong>
+                    ) : (
+                      <span style={{ color: '#64748b', fontStyle: 'italic' }}>Not assigned yet</span>
+                    )}
+                  </span>
                 </div>
-                <div>
-                  <dt>Your Driver</dt>
-                  <dd>
-                    {currentRide.status === "assigned" && currentRide.driver ? (
-                      <div>
-                        <strong>{currentRide.driver.name}</strong>
-                        <div style={{ 
-                          marginTop: '0.5rem',
-                          padding: '0.75rem',
-                          backgroundColor: '#fef3c7',
-                          border: '1px solid #fbbf24',
-                          borderRadius: '0.5rem',
-                          color: '#92400e',
-                          fontSize: '0.875rem'
-                        }}>
-                          ⏳ <strong>Waiting for driver to accept...</strong><br />
-                          The driver has been assigned but hasn't accepted yet. You'll be notified when they accept.
+              </div>
+
+              {/* Route Information */}
+              <div className="route-info">
+                <div className="route-item pickup">
+                  <div className="route-icon">📍</div>
+                  <div className="route-details">
+                    <div className="route-label">Pickup</div>
+                    <div className="route-name">{currentRide.pickup_place?.name || currentRide.pickup_address || "Not specified"}</div>
+                    {currentRide.pickup_place?.address && (
+                      <div className="route-address">{currentRide.pickup_place.address}</div>
+                    )}
+                  </div>
+                </div>
+                <div className="route-arrow">↓</div>
+                <div className="route-item dropoff">
+                  <div className="route-icon">📍</div>
+                  <div className="route-details">
+                    <div className="route-label">Destination</div>
+                    <div className="route-name">{currentRide.dropoff_place?.name || currentRide.dropoff_address || "Not specified"}</div>
+                    {currentRide.dropoff_place?.address && (
+                      <div className="route-address">{currentRide.dropoff_place.address}</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Driver Information - Only show when driver is assigned */}
+              {currentRide.driver && (
+                <div className="driver-info-card">
+                  {currentRide.status === "assigned" && (
+                    <div className="status-alert status-alert--warning">
+                      ⏳ <strong>Waiting for driver to accept...</strong> You'll be notified when they accept.
+                    </div>
+                  )}
+                  
+                  {(currentRide.status === "accepted" || currentRide.status === "picked_up") && (
+                    <>
+                      {currentRide.status === "accepted" && (
+                        <div className="status-alert status-alert--info">
+                          ✅ <strong>Driver Accepted</strong> - Heading to pickup location
                         </div>
-                      </div>
-                    ) : currentRide.status === "accepted" || currentRide.status === "picked_up" ? (
-                      currentRide.driver ? (
-                        <div style={{
-                          padding: '1.5rem',
-                          backgroundColor: '#f8fafc',
-                          border: '2px solid #e2e8f0',
-                          borderRadius: '0.75rem',
-                          marginTop: '0.5rem'
-                        }}>
-                          {/* Driver Header with Status */}
-                          <div style={{ marginBottom: '1.5rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                              <h4 style={{ margin: 0, fontSize: '1.5rem', color: '#0f172a' }}>
-                                👤 {currentRide.driver.name}
-                              </h4>
-                              {currentRide.driver.average_rating && currentRide.driver.average_rating > 0 && (
-                                <div style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '0.5rem',
-                                  padding: '0.5rem 0.75rem',
-                                  backgroundColor: '#fef3c7',
-                                  border: '1px solid #fbbf24',
-                                  borderRadius: '0.5rem'
-                                }}>
-                                  <span style={{ fontSize: '1.25rem' }}>⭐</span>
-                                  <strong style={{ color: '#92400e' }}>
-                                    {parseFloat(currentRide.driver.average_rating).toFixed(1)}
-                                  </strong>
-                                  {currentRide.driver.total_ratings && (
-                                    <small style={{ color: '#92400e' }}>
-                                      ({currentRide.driver.total_ratings} {currentRide.driver.total_ratings === 1 ? 'rating' : 'ratings'})
-                                    </small>
-                                  )}
-                                </div>
+                      )}
+                      {currentRide.status === "picked_up" && (
+                        <div className="status-alert status-alert--success">
+                          🚗 <strong>On the Way</strong> - Heading to your destination
+                        </div>
+                      )}
+
+                      <div className="driver-header">
+                        <div className="driver-name-rating">
+                          <h4>👤 {currentRide.driver.name}</h4>
+                          {currentRide.driver.average_rating > 0 && (
+                            <div className="driver-rating">
+                              <span>⭐</span>
+                              <strong>{parseFloat(currentRide.driver.average_rating).toFixed(1)}</strong>
+                              {currentRide.driver.total_ratings && (
+                                <small>({currentRide.driver.total_ratings})</small>
                               )}
                             </div>
-                            {currentRide.status === "accepted" && (
-                              <div style={{ 
-                                padding: '0.75rem 1rem',
-                                backgroundColor: '#dbeafe',
-                                border: '1px solid #3b82f6',
-                                borderRadius: '0.5rem',
-                                color: '#1e40af',
-                                fontSize: '0.875rem',
-                                fontWeight: '600'
-                              }}>
-                                ✅ Driver Accepted - Heading to Pickup Location
+                          )}
+                        </div>
+                      </div>
+
+                      {currentRide.driver.phone && (
+                        <div className="driver-contact">
+                          <div className="contact-label">📞 Contact</div>
+                          <div className="contact-number">{currentRide.driver.phone}</div>
+                          <a href={`tel:${currentRide.driver.phone.replace(/\s+/g, '')}`} className="call-button">
+                            📞 Call Driver
+                          </a>
+                        </div>
+                      )}
+
+                      {(currentRide.driver.vehicle_type || currentRide.driver.plate_number) && (
+                        <div className="vehicle-info">
+                          <div className="info-label">🚗 Vehicle</div>
+                          <div className="info-grid">
+                            {currentRide.driver.vehicle_type && (
+                              <div className="info-item">
+                                <span className="info-key">Type:</span>
+                                <span className="info-value">{currentRide.driver.vehicle_type}</span>
                               </div>
                             )}
-                            {currentRide.status === "picked_up" && (
-                              <div style={{ 
-                                padding: '0.75rem 1rem',
-                                backgroundColor: '#dcfce7',
-                                border: '1px solid #10b981',
-                                borderRadius: '0.5rem',
-                                color: '#065f46',
-                                fontSize: '0.875rem',
-                                fontWeight: '600'
-                              }}>
-                                🚗 On the Way to Your Destination
+                            {currentRide.driver.plate_number && (
+                              <div className="info-item">
+                                <span className="info-key">Plate:</span>
+                                <span className="info-value plate-number">{currentRide.driver.plate_number}</span>
                               </div>
                             )}
                           </div>
+                        </div>
+                      )}
 
-                          {/* Contact Information */}
-                          {currentRide.driver.phone && (
-                            <div style={{ 
-                              marginBottom: '1.25rem',
-                              padding: '1rem',
-                              backgroundColor: 'white',
-                              border: '1px solid #e2e8f0',
-                              borderRadius: '0.5rem'
-                            }}>
-                              <div style={{ marginBottom: '0.75rem' }}>
-                                <small style={{ display: 'block', marginBottom: '0.25rem', color: '#64748b', fontWeight: '600' }}>
-                                  📞 Contact Number
-                                </small>
-                                <strong style={{ fontSize: '1.1rem', color: '#0f172a' }}>{currentRide.driver.phone}</strong>
-                              </div>
-                              <a 
-                                href={`tel:${currentRide.driver.phone.replace(/\s+/g, '')}`}
-                                style={{
-                                  display: 'inline-block',
-                                  width: '100%',
-                                  padding: '0.75rem 1.5rem',
-                                  backgroundColor: 'var(--accent-primary, #3b82f6)',
-                                  color: 'white',
-                                  textDecoration: 'none',
-                                  borderRadius: '0.5rem',
-                                  fontWeight: '600',
-                                  fontSize: '1rem',
-                                  textAlign: 'center',
-                                  boxShadow: '0 2px 4px rgba(59, 130, 246, 0.3)',
-                                  transition: 'background-color 0.2s'
-                                }}
-                                onMouseOver={(e) => e.target.style.backgroundColor = '#2563eb'}
-                                onMouseOut={(e) => e.target.style.backgroundColor = 'var(--accent-primary, #3b82f6)'}
-                              >
-                                📞 Call Driver Now
-                              </a>
-                            </div>
+                      {currentRide.driver.current_place && (
+                        <div className="driver-location">
+                          <div className="info-label">📍 Driver Location</div>
+                          <div className="location-name">{currentRide.driver.current_place.name}</div>
+                          {currentRide.driver.current_place.address && (
+                            <div className="location-address">{currentRide.driver.current_place.address}</div>
                           )}
-
-                          {/* Vehicle Information */}
-                          {(currentRide.driver.vehicle_type || currentRide.driver.vehicle_make || currentRide.driver.vehicle_model) && (
-                            <div style={{ 
-                              marginBottom: '1.25rem',
-                              padding: '1rem',
-                              backgroundColor: 'white',
-                              border: '1px solid #e2e8f0',
-                              borderRadius: '0.5rem'
-                            }}>
-                              <small style={{ display: 'block', marginBottom: '0.75rem', color: '#64748b', fontWeight: '600' }}>
-                                🚗 Vehicle Information
-                              </small>
-                              <div style={{ display: 'grid', gap: '0.5rem' }}>
-                                {currentRide.driver.vehicle_type && (
-                                  <div>
-                                    <strong style={{ color: '#0f172a' }}>Type:</strong>{' '}
-                                    <span style={{ color: '#475569' }}>{currentRide.driver.vehicle_type}</span>
-                                  </div>
-                                )}
-                                {(currentRide.driver.vehicle_make || currentRide.driver.vehicle_model) && (
-                                  <div>
-                                    <strong style={{ color: '#0f172a' }}>Make & Model:</strong>{' '}
-                                    <span style={{ color: '#475569' }}>
-                                      {currentRide.driver.vehicle_make || ''} {currentRide.driver.vehicle_model || ''}
-                                    </span>
-                                  </div>
-                                )}
-                                {currentRide.driver.plate_number && (
-                                  <div>
-                                    <strong style={{ color: '#0f172a' }}>Plate Number:</strong>{' '}
-                                    <span style={{ 
-                                      color: '#475569',
-                                      fontFamily: 'monospace',
-                                      fontSize: '1.1rem',
-                                      fontWeight: '600'
-                                    }}>
-                                      {currentRide.driver.plate_number}
-                                    </span>
-                                  </div>
-                                )}
-                                {currentRide.driver.license_number && (
-                                  <div>
-                                    <strong style={{ color: '#0f172a' }}>License Number:</strong>{' '}
-                                    <span style={{ color: '#475569' }}>{currentRide.driver.license_number}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Driver Location */}
-                          {currentRide.driver.current_place && (
-                            <div style={{ 
-                              padding: '1rem',
-                              backgroundColor: 'white',
-                              border: '1px solid #e2e8f0',
-                              borderRadius: '0.5rem'
-                            }}>
-                              <small style={{ display: 'block', marginBottom: '0.75rem', color: '#64748b', fontWeight: '600' }}>
-                                📍 Driver's Current Location
-                              </small>
-                              <div>
-                                <strong style={{ fontSize: '1.1rem', color: '#0f172a', display: 'block', marginBottom: '0.25rem' }}>
-                                  {currentRide.driver.current_place.name}
-                                </strong>
-                                {currentRide.driver.current_place.address && (
-                                  <small style={{ color: '#64748b', display: 'block' }}>
-                                    {currentRide.driver.current_place.address}
-                                  </small>
-                                )}
-                                {currentRide.driver.distance_km && (
-                                  <div style={{ 
-                                    marginTop: '0.5rem',
-                                    padding: '0.5rem',
-                                    backgroundColor: '#f0f9ff',
-                                    border: '1px solid #bae6fd',
-                                    borderRadius: '0.375rem',
-                                    display: 'inline-block'
-                                  }}>
-                                    <small style={{ color: '#0369a1' }}>
-                                      📏 Distance: {parseFloat(currentRide.driver.distance_km).toFixed(1)} km away
-                                    </small>
-                                  </div>
-                                )}
-                              </div>
+                          {currentRide.driver.distance_km && (
+                            <div className="distance-badge">
+                              📏 {parseFloat(currentRide.driver.distance_km).toFixed(1)} km away
                             </div>
                           )}
                         </div>
-                      ) : (
-                        <span className="text-muted">Driver information loading...</span>
-                      )
-                    ) : currentRide.driver ? (
-                      <>
-                        <strong>{currentRide.driver.name}</strong>
-                        {currentRide.driver.phone && (
-                          <>
-                            <br />
-                            <small>Contact: {currentRide.driver.phone}</small>
-                          </>
-                        )}
-                      </>
-                    ) : (
-                      <span className="text-muted">
-                        Searching for available driver...
-                      </span>
-                    )}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Vehicle Type</dt>
-                  <dd>
-                    {(currentRide.status === "accepted" || currentRide.status === "picked_up") && currentRide.driver?.vehicle_type
-                      ? currentRide.driver.vehicle_type
-                      : currentRide.driver?.vehicle_type || "Not available yet"}
-                  </dd>
-                </div>
-                <div>
-                  <dt>Estimated Fare</dt>
-                  <dd>
-                    ₱
-                    {currentRide.fare
-                      ? parseFloat(currentRide.fare).toFixed(2)
-                      : "0.00"}
-                  </dd>
-                </div>
-                {(currentRide.pickup_address || currentRide.pickup_place) && (
-                  <div>
-                    <dt>Pickup Location</dt>
-                    <dd>
-                      {currentRide.pickup_place?.name ||
-                        currentRide.pickup_address}
-                      {currentRide.pickup_place?.address && (
-                        <>
-                          <br />
-                          <small className="text-muted">
-                            {currentRide.pickup_place.address}
-                          </small>
-                        </>
                       )}
-                    </dd>
-                  </div>
-                )}
-                {(currentRide.dropoff_address || currentRide.dropoff_place) && (
-                  <div>
-                    <dt>Destination</dt>
-                    <dd>
-                      {currentRide.dropoff_place?.name ||
-                        currentRide.dropoff_address}
-                      {currentRide.dropoff_place?.address && (
-                        <>
-                          <br />
-                          <small className="text-muted">
-                            {currentRide.dropoff_place.address}
-                          </small>
-                        </>
-                      )}
-                    </dd>
-                  </div>
-                )}
-              </dl>
-              <div style={{ marginTop: "1.5rem", display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-                <button
-                  className="secondary"
-                  onClick={loadCurrentRide}
-                  disabled={loadingRide}
-                >
-                  🔄 Refresh Status
-                </button>
-                <button
-                  onClick={handleCancelClick}
-                  disabled={loadingRide || !canCancelRide(currentRide)}
-                  style={{ 
-                    backgroundColor: canCancelRide(currentRide) ? 'var(--error, #ef4444)' : '#94a3b8',
-                    color: 'white',
-                    border: 'none',
-                    flex: 1,
-                    minWidth: '200px',
-                    padding: '0.75rem 1.5rem',
-                    borderRadius: '0.5rem',
-                    fontWeight: '600',
-                    fontSize: '1rem',
-                    cursor: (loadingRide || !canCancelRide(currentRide)) ? 'not-allowed' : 'pointer',
-                    boxShadow: canCancelRide(currentRide) ? '0 2px 4px rgba(239, 68, 68, 0.2)' : 'none',
-                    opacity: canCancelRide(currentRide) ? 1 : 0.6
-                  }}
-                  title={!canCancelRide(currentRide) ? `Cannot cancel ride with status: ${currentRide.status}` : "Cancel this ride"}
-                >
-                  {loadingRide ? "⏳ Cancelling..." : "❌ Cancel Booking"}
-                </button>
-                {!canCancelRide(currentRide) && (
-                  <div style={{ 
-                    width: '100%',
-                    padding: '0.5rem', 
-                    textAlign: 'center',
-                    color: '#64748b',
-                    fontSize: '0.875rem',
-                    fontStyle: 'italic'
-                  }}>
-                    {currentRide.status === "picked_up" && "⏸️ Ride is in progress. Cancellation is no longer available."}
-                    {currentRide.status === "completed" && "✅ This ride has been completed."}
-                    {currentRide.status === "cancelled" && "🚫 This ride has been cancelled."}
-                    {!["picked_up", "completed", "cancelled"].includes(currentRide.status) && 
-                     `ℹ️ Current status: ${currentRide.status}. Cancellation may not be available at this time.`}
-                  </div>
-                )}
-              </div>
-              {!["pending", "assigned", "accepted"].includes(currentRide.status) && currentRide.status !== "cancelled" && (
-                <div style={{ marginTop: "1rem" }}>
-                  <p className="text-muted" style={{ fontSize: "0.875rem" }}>
-                    {currentRide.status === "picked_up" && "Ride is in progress. Cancellation is no longer available."}
-                    {currentRide.status === "completed" && "This ride has been completed."}
-                  </p>
+                    </>
+                  )}
                 </div>
               )}
-            </>
+
+              {!currentRide.driver && (
+                <div className="no-driver-message">
+                  <span>🔍 Searching for available driver...</span>
+                </div>
+              )}
+
+              {/* Rating Form for Completed Rides */}
+              {currentRide.status === "completed" && currentRide.driver && !currentRide.feedback && (
+                <div style={{
+                  marginTop: "1.5rem",
+                  paddingTop: "1.5rem",
+                  borderTop: "2px solid #10b981",
+                  background: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)",
+                  padding: "1.5rem",
+                  borderRadius: "0.75rem",
+                  border: "1px solid #86efac"
+                }}>
+                  <FeedbackForm
+                    token={token}
+                    rideId={currentRide.id}
+                    driverName={currentRide.driver.name}
+                    onSuccess={() => {
+                      setSuccess('Thank you for rating your driver!');
+                      setTimeout(() => {
+                        loadCurrentRide();
+                        setSuccess('');
+                      }, 2000);
+                    }}
+                    onSkip={() => {
+                      // Allow skipping, but mark that feedback was skipped
+                      setSuccess('Rating skipped. You can rate later from your ride history.');
+                      setTimeout(() => setSuccess(''), 3000);
+                    }}
+                  />
+                </div>
+              )}
+
+              {/* Cancel Button at Bottom */}
+              {canCancelRide(currentRide) && (
+                <div style={{
+                  marginTop: "1.5rem",
+                  paddingTop: "1.5rem",
+                  borderTop: "1px solid #e2e8f0"
+                }}>
+                  <button
+                    onClick={handleCancelClick}
+                    disabled={loadingRide}
+                    style={{
+                      backgroundColor: '#ef4444',
+                      color: 'white',
+                      border: 'none',
+                      width: '100%',
+                      padding: '0.75rem 1.5rem',
+                      borderRadius: '0.5rem',
+                      fontWeight: '600',
+                      fontSize: '1rem',
+                      cursor: loadingRide ? 'not-allowed' : 'pointer',
+                      boxShadow: '0 2px 4px rgba(239, 68, 68, 0.2)',
+                      transition: 'all 0.3s ease',
+                      opacity: loadingRide ? 0.7 : 1
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!loadingRide) {
+                        e.target.style.backgroundColor = '#dc2626';
+                        e.target.style.boxShadow = '0 4px 8px rgba(239, 68, 68, 0.3)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!loadingRide) {
+                        e.target.style.backgroundColor = '#ef4444';
+                        e.target.style.boxShadow = '0 2px 4px rgba(239, 68, 68, 0.2)';
+                      }
+                    }}
+                  >
+                    {loadingRide ? "Cancelling..." : "Cancel Ride"}
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="panel__empty">
               <p>You don't have an active ride right now.</p>
@@ -1424,7 +1042,6 @@ export default function PassengerDashboard() {
             </div>
           )}
         </article>
-        )}
       </section>
 
       <section className="panel">
@@ -1464,7 +1081,7 @@ export default function PassengerDashboard() {
               <span>Fare Amount</span>
               <span>Date</span>
             </div>
-            {history.map((ride) => (
+            {displayHistory.map((ride) => (
               <div className="table__row" key={ride.id}>
                 <span>#{ride.id}</span>
                 <span>

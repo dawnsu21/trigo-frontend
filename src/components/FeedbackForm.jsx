@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { submitFeedback } from '../services/feedbackService'
 import './FeedbackForm.css'
 
-export default function FeedbackForm({ token, rideId, onSuccess, onSkip }) {
+export default function FeedbackForm({ token, rideId, driverName, onSuccess, onSkip }) {
   const [rating, setRating] = useState(0)
   const [hoveredRating, setHoveredRating] = useState(0)
   const [comment, setComment] = useState('')
@@ -38,9 +38,13 @@ export default function FeedbackForm({ token, rideId, onSuccess, onSkip }) {
 
   return (
     <div className="feedback-form">
-      <h3>Rate Your Experience</h3>
+      <h3>Rate Your Driver</h3>
       <p className="feedback-form__description">
-        How was your ride? Your feedback helps us improve our service.
+        {driverName ? (
+          <>How was your ride with <strong>{driverName}</strong>? Your feedback helps us improve our service.</>
+        ) : (
+          <>How was your ride? Your feedback helps us improve our service.</>
+        )}
       </p>
 
       <form onSubmit={handleSubmit}>

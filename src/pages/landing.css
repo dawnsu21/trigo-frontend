@@ -1,18 +1,25 @@
 /* Modern Landing Page Design */
+* {
+  box-sizing: border-box;
+}
+
 .landing {
   min-height: 100vh;
-  padding: 4rem 1rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  background-attachment: fixed;
+  padding: 2rem 1rem;
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 50%, #1e40af 100%);
   color: #f8fafc;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3rem;
+  justify-content: center;
+  gap: 2rem;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  width: 100%;
 }
 
+/* Road Pattern Background */
 .landing::before {
   content: '';
   position: absolute;
@@ -20,66 +27,214 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: 
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-image: 
+    /* Road lines */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 40px,
+      rgba(255, 255, 255, 0.1) 40px,
+      rgba(255, 255, 255, 0.1) 50px
+    ),
+    /* Side road markings */
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 20%,
+      transparent 80%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
   pointer-events: none;
+  animation: roadMove 10s linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes roadMove {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 50px 0, 0 0;
+  }
+}
+
+/* Road horizon effect */
+.landing::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(
+    to top,
+    rgba(30, 64, 175, 0.8) 0%,
+    rgba(37, 99, 235, 0.4) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+@keyframes backgroundFloat {
+  0%, 100% {
+    background-position: 0% 0%, 100% 100%;
+    opacity: 1;
+  }
+  50% {
+    background-position: 20% 20%, 80% 80%;
+    opacity: 0.8;
+  }
 }
 
 .landing__hero {
   text-align: center;
-  z-index: 1;
+  z-index: 2;
   position: relative;
+  margin-bottom: 1rem;
+  padding: 1rem 0;
+  pointer-events: none;
+}
+
+.landing__hero h1,
+.landing__hero p {
+  pointer-events: auto;
+}
+
+/* Driving-themed decorative road line under title */
+.landing__hero::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 4px;
+  background: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.5) 0px,
+    rgba(255, 255, 255, 0.5) 20px,
+    transparent 20px,
+    transparent 40px
+  );
+  animation: roadLineMove 2s linear infinite;
+  z-index: -1;
+}
+
+@keyframes roadLineMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 0;
+  }
 }
 
 .landing__hero h1 {
-  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 800;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
   line-height: 1.2;
   letter-spacing: -0.02em;
+  position: relative;
+  display: inline-block;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
+
 
 .landing__hero p {
   font-size: clamp(1rem, 2vw, 1.25rem);
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.95);
   margin: 0;
+  font-weight: 500;
 }
 
+/* Floating Panel with Colored Outline */
 .landing__auth {
-  width: min(480px, 100%);
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 2rem;
+  width: 100%;
+  max-width: 450px;
+  background: #ffffff;
+  border-radius: 1rem;
   padding: 2.5rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  z-index: 1;
+  border: 3px solid transparent;
+  box-shadow: 
+    0 20px 60px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  z-index: 10;
   position: relative;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: panelFloat 4s ease-in-out infinite;
+  transform-style: preserve-3d;
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+.landing__auth::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  background: linear-gradient(135deg, #93c5fd, #a5b4fc, #c4b5fd, #93c5fd);
+  background-size: 300% 300%;
+  border-radius: 1rem;
+  z-index: -1;
+  animation: borderGlow 3s ease infinite;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+@keyframes panelFloat {
+  0%, 100% {
+    transform: translateY(0px) rotateX(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotateX(1deg);
+  }
+}
+
+@keyframes borderGlow {
+  0%, 100% {
+    background-position: 0% 50%;
+    opacity: 0.8;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 1;
+  }
 }
 
 .landing__auth:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.35);
+  transform: translateY(-15px) rotateX(2deg);
+  box-shadow: 
+    0 30px 80px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 0 60px rgba(147, 197, 253, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.landing__auth:hover::before {
+  opacity: 1;
+  animation: borderGlow 1.5s ease infinite;
+  background: linear-gradient(135deg, #93c5fd, #a5b4fc, #c4b5fd, #93c5fd, #a5b4fc);
 }
 
 .landing__form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.5rem;
   color: #0f172a;
+  position: relative;
+  z-index: 1;
 }
 
 .landing__form h2 {
   font-size: 1.75rem;
   font-weight: 700;
   color: #0f172a;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 1.5rem 0;
   text-align: center;
 }
 
@@ -91,9 +246,13 @@
   font-size: 0.9375rem;
   color: #1e293b;
   gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
 }
 
 .landing__form input {
+  width: 100%;
   border-radius: 0.75rem;
   border: 2px solid #e2e8f0;
   padding: 0.875rem 1rem;
@@ -102,6 +261,11 @@
   transition: all 0.2s ease;
   background: #ffffff;
   color: #0f172a;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .landing__form input:focus {
@@ -110,23 +274,38 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+.landing__form input::placeholder {
+  color: #94a3b8;
+  opacity: 0.7;
+}
+
 .landing__form button {
   border: none;
-  border-radius: 0.875rem;
+  border-radius: 0.75rem;
   padding: 1rem 1.5rem;
   font-weight: 600;
   font-size: 1rem;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: #3b82f6;
   color: #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
   margin-top: 0.5rem;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .landing__form button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  background: #2563eb;
+}
+
+.landing__form button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .landing__form button:disabled {
@@ -135,56 +314,317 @@
   transform: none;
 }
 
+/* Alert Styles */
+.alert {
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 2px solid transparent;
+}
+
+.alert--error {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  color: #b42318;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.alert--success {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  color: #065f46;
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* CTA Section */
 .landing__cta {
-  border-top: 1px solid rgba(226, 232, 240, 0.8);
+  border-top: 1px solid #e2e8f0;
   padding-top: 1.5rem;
+  margin-top: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
   text-align: center;
-  color: #64748b;
+  position: relative;
+  z-index: 1;
 }
 
 .landing__cta p {
-  margin: 0;
+  margin: 0 0 1rem 0;
   font-weight: 600;
   color: #475569;
+  font-size: 0.9375rem;
 }
 
 .landing__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
 }
 
 .landing__actions a {
-  border-radius: 9999px;
-  border: 2px solid #e2e8f0;
-  padding: 0.625rem 1.25rem;
-  color: #475569;
+  width: 100%;
+  border-radius: 0.875rem;
+  border: none;
+  padding: 1.125rem 1.5rem;
+  color: #ffffff;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.9375rem;
-  transition: all 0.2s ease;
-  background: #ffffff;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  z-index: 20;
+  pointer-events: auto;
+  touch-action: manipulation;
+  overflow: hidden;
+}
+
+.landing__actions a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: -1;
+}
+
+.landing__actions a:first-child {
+  background: #3b82f6;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+}
+
+.landing__actions a:first-child::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+}
+
+.landing__actions a:last-child {
+  background: #10b981;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+}
+
+.landing__actions a:last-child::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
 }
 
 .landing__actions a:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-  background: #eff6ff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  transform: translateY(-3px);
 }
 
-@media (max-width: 640px) {
+.landing__actions a:first-child:hover {
+  background: #2563eb;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+}
+
+.landing__actions a:first-child:hover::before {
+  opacity: 1;
+}
+
+.landing__actions a:last-child:hover {
+  background: #059669;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+}
+
+.landing__actions a:last-child:hover::before {
+  opacity: 1;
+}
+
+.landing__actions a:active {
+  transform: translateY(-1px);
+}
+
+.landing__actions a:first-child:active {
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.landing__actions a:last-child:active {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+@media (max-width: 768px) {
   .landing {
-    padding: 2rem 1rem;
-    gap: 2rem;
+    padding: 1.5rem 1rem;
+    gap: 1.5rem;
+    min-height: 100vh;
   }
-  
+
+  .landing__hero {
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+  }
+
+  .landing__hero h1 {
+    font-size: clamp(2rem, 8vw, 3rem);
+    margin-bottom: 0.75rem;
+  }
+
+  .landing__hero p {
+    font-size: clamp(0.875rem, 3vw, 1rem);
+  }
+
+  .landing__hero::after {
+    width: 150px;
+    height: 3px;
+  }
+
   .landing__auth {
+    width: 100%;
+    max-width: 100%;
     padding: 2rem 1.5rem;
+    border-radius: 1rem;
+    margin: 0;
+  }
+
+  .landing__form {
+    gap: 1.25rem;
+  }
+
+  .landing__form h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .landing__form label {
+    font-size: 0.875rem;
+  }
+
+  .landing__form input {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.9375rem;
+  }
+
+  .landing__form button {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9375rem;
+  }
+
+  .landing__cta {
+    padding-top: 1.25rem;
+    margin-top: 1.25rem;
+    gap: 0.875rem;
+  }
+
+  .landing__cta p {
+    font-size: 0.875rem;
+  }
+
+  .landing__actions {
+    grid-template-columns: 1fr;
+    gap: 0.875rem;
+    width: 100%;
+  }
+
+  .landing__actions a {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    font-size: 0.875rem;
+  }
+
+  .alert {
+    padding: 0.875rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .landing {
+    padding: 1rem 0.75rem;
+    gap: 1.25rem;
+  }
+
+  .landing__hero h1 {
+    font-size: clamp(1.75rem, 10vw, 2.5rem);
+    line-height: 1.3;
+  }
+
+  .landing__hero p {
+    font-size: 0.875rem;
+  }
+
+  .landing__hero::after {
+    width: 120px;
+    height: 2px;
+  }
+
+  .landing__auth {
+    padding: 1.5rem 1.25rem;
+    border-radius: 0.875rem;
+  }
+
+  .landing__form {
+    gap: 1rem;
+  }
+
+  .landing__form h2 {
+    font-size: 1.375rem;
+    margin-bottom: 1rem;
+  }
+
+  .landing__form label {
+    font-size: 0.8125rem;
+    gap: 0.375rem;
+  }
+
+  .landing__form input {
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.625rem;
+  }
+
+  .landing__form button {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 0.625rem;
+  }
+
+  .landing__cta {
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+
+  .landing__cta p {
+    font-size: 0.8125rem;
+  }
+
+  .landing__actions a {
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+    border-radius: 0.625rem;
+  }
+
+  .alert {
+    padding: 0.75rem 0.875rem;
+    font-size: 0.8125rem;
+    border-radius: 0.625rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .landing {
+    padding: 0.75rem 0.5rem;
+    gap: 1rem;
+  }
+
+  .landing__auth {
+    padding: 1.25rem 1rem;
+  }
+
+  .landing__form h2 {
+    font-size: 1.25rem;
+  }
+
+  .landing__form input,
+  .landing__form button {
+    font-size: 0.8125rem;
   }
 }

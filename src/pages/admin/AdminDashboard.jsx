@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import {
   fetchAdminDashboard,
@@ -6,6 +7,7 @@ import {
   fetchAdminRides,
   updateDriverStatus,
 } from "../../services/adminService";
+import FeedbackNotificationBell from "../../components/FeedbackNotificationBell";
 // Emergency and Announcement management - will be used when UI sections are added
 // import {
 //   fetchEmergencies,
@@ -19,12 +21,18 @@ import {
 //   deleteAnnouncement,
 // } from "../../services/announcementService";
 import "../../styles/dashboard.css";
+import "../../styles/admin-dashboard.css";
 
 export default function AdminDashboard() {
   const { token, logout, user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [drivers, setDrivers] = useState([]);
+  const [allDrivers, setAllDrivers] = useState([]); // Store all drivers for filtering
   const [rides, setRides] = useState([]);
+  const [passengers, setPassengers] = useState([]);
+  const [allPassengers, setAllPassengers] = useState([]); // Store all passengers for filtering
+  const [searchQuery, setSearchQuery] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
@@ -76,7 +84,9 @@ export default function AdminDashboard() {
       console.log("[AdminDashboard] Loading drivers...");
       const data = await fetchAdminDrivers(token);
       console.log("[AdminDashboard] Drivers loaded:", data);
-      setDrivers(Array.isArray(data) ? data : data?.data || []);
+      const driversList = Array.isArray(data) ? data : data?.data || [];
+      setAllDrivers(driversList);
+      setDrivers(driversList);
     } catch (err) {
       console.error("[AdminDashboard] Error loading drivers:", err);
       setError(err?.message || err?.data?.message || "Unable to load drivers");
@@ -92,6 +102,45 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error("[AdminDashboard] Error loading rides:", err);
       setError(err?.message || err?.data?.message || "Unable to load rides");
+    }
+  }, [token]);
+
+  const loadPassengers = useCallback(async () => {
+    try {
+      console.log("[AdminDashboard] Loading passengers...");
+      // Since /api/admin/passengers doesn't exist, extract unique passengers from rides
+      const ridesData = await fetchAdminRides(token);
+      const rides = Array.isArray(ridesData) ? ridesData : ridesData?.data || [];
+      
+      // Extract unique passengers from rides
+      const passengerMap = new Map();
+      rides.forEach((ride) => {
+        if (ride.passenger) {
+          const passengerId = ride.passenger.id || ride.passenger.user_id || ride.passenger_id;
+          if (passengerId && !passengerMap.has(passengerId)) {
+            passengerMap.set(passengerId, {
+              id: passengerId,
+              user_id: passengerId,
+              name: ride.passenger.name,
+              email: ride.passenger.email,
+              created_at: ride.passenger.created_at || ride.created_at,
+              user: ride.passenger.user || {
+                name: ride.passenger.name,
+                email: ride.passenger.email,
+                created_at: ride.passenger.created_at || ride.created_at,
+              },
+            });
+          }
+        }
+      });
+      
+      const uniquePassengers = Array.from(passengerMap.values());
+      console.log("[AdminDashboard] Passengers extracted from rides:", uniquePassengers);
+      setAllPassengers(uniquePassengers);
+      setPassengers(uniquePassengers);
+    } catch (err) {
+      console.error("[AdminDashboard] Error loading passengers:", err);
+      setError(err?.message || err?.data?.message || "Unable to load passengers from rides");
     }
   }, [token]);
 
@@ -113,6 +162,57 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   }, [token, loadStats, loadDrivers, loadRides]);
+
+  // Filter drivers and passengers based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setDrivers(allDrivers);
+      setPassengers(allPassengers);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+
+    // Filter drivers
+    const filteredDrivers = allDrivers.filter((driver) => {
+      const name = (driver.name || driver.user?.name || "").toLowerCase();
+      const email = (driver.email || driver.user?.email || "").toLowerCase();
+      const phone = (driver.phone || driver.user?.phone || "").toLowerCase();
+      const vehicle = (driver.vehicle_type || 
+        (driver.vehicle_make && driver.vehicle_model
+          ? `${driver.vehicle_make} ${driver.vehicle_model}`
+          : "") || "").toLowerCase();
+      const plate = (driver.plate_number || driver.license_plate || "").toLowerCase();
+      const id = String(driver.id || "").toLowerCase();
+
+      return (
+        name.includes(query) ||
+        email.includes(query) ||
+        phone.includes(query) ||
+        vehicle.includes(query) ||
+        plate.includes(query) ||
+        id.includes(query)
+      );
+    });
+
+    // Filter passengers
+    const filteredPassengers = allPassengers.filter((passenger) => {
+      const name = (passenger.name || passenger.user?.name || "").toLowerCase();
+      const email = (passenger.email || passenger.user?.email || "").toLowerCase();
+      const phone = (passenger.phone || passenger.user?.phone || "").toLowerCase();
+      const id = String(passenger.id || passenger.user_id || "").toLowerCase();
+
+      return (
+        name.includes(query) ||
+        email.includes(query) ||
+        phone.includes(query) ||
+        id.includes(query)
+      );
+    });
+
+    setDrivers(filteredDrivers);
+    setPassengers(filteredPassengers);
+  }, [searchQuery, allDrivers, allPassengers]);
 
   const handleDriverStatus = async (driverId, status) => {
     setBusy(true);
@@ -167,57 +267,176 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="dashboard">
-      <header className="dashboard__header">
+    <div className="dashboard admin-dashboard">
+      <header className="dashboard__header" style={{ 
+        display: "grid", 
+        gridTemplateColumns: "1fr auto 1fr",
+        gap: "1rem",
+        alignItems: "center"
+      }}>
         <div>
           <h2>Admin Dashboard</h2>
           <p>Operational overview</p>
           {user && <p>Welcome, {user.name || user.email}</p>}
         </div>
-        <button onClick={logout} className="secondary">
-          Logout
-        </button>
+        <div style={{ 
+          display: "flex", 
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.75rem",
+          minWidth: "400px",
+          maxWidth: "700px",
+          width: "100%",
+          position: "relative"
+        }}>
+          <div style={{ position: "relative", flex: 1, width: "100%" }}>
+            {/* Search Icon */}
+            <svg
+              style={{
+                position: "absolute",
+                left: "1rem",
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: "20px",
+                height: "20px",
+                color: "var(--text-secondary)",
+                pointerEvents: "none",
+                zIndex: 1,
+              }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search drivers and passengers by name, email, phone, or ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "1rem 1rem 1rem 3rem",
+                paddingRight: searchQuery ? "3rem" : "1rem",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid var(--card-border)",
+                fontSize: "1rem",
+                fontFamily: "inherit",
+                outline: "none",
+                transition: "var(--transition)",
+                backgroundColor: "var(--card-bg)",
+                color: "var(--text-primary)",
+                fontWeight: "400",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "var(--accent-primary)";
+                e.target.style.boxShadow = "0 0 0 3px rgba(59, 130, 246, 0.1)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "var(--card-border)";
+                e.target.style.boxShadow = "none";
+              }}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                style={{
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "0.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text-secondary)",
+                  fontSize: "1.5rem",
+                  lineHeight: 1,
+                  width: "24px",
+                  height: "24px",
+                  borderRadius: "50%",
+                  transition: "var(--transition)",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = "var(--text-primary)";
+                  e.target.style.backgroundColor = "var(--card-border)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = "var(--text-secondary)";
+                  e.target.style.backgroundColor = "transparent";
+                }}
+                title="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <div style={{
+              fontSize: "0.875rem",
+              color: "var(--text-secondary)",
+              whiteSpace: "nowrap",
+              padding: "0.5rem 0",
+              fontWeight: "500",
+            }}>
+              {drivers.length + passengers.length} result{drivers.length + passengers.length !== 1 ? 's' : ''}
+            </div>
+          )}
+        </div>
+        <div style={{ 
+          display: "flex", 
+          gap: "0.75rem", 
+          alignItems: "center",
+          justifyContent: "flex-end"
+        }}>
+          <FeedbackNotificationBell token={token} />
+          <button 
+            onClick={() => navigate("/admin/statistics")} 
+            className="secondary"
+          >
+            Statistics
+          </button>
+          <button 
+            onClick={() => navigate("/admin/feedbacks")} 
+            className="secondary"
+          >
+            Feedbacks
+          </button>
+          <button 
+            onClick={() => navigate("/admin/trip-history")} 
+            className="secondary"
+          >
+            History
+          </button>
+          <button 
+            onClick={() => navigate("/admin/accounts")} 
+            className="secondary"
+          >
+            Accounts
+          </button>
+          <button onClick={logout} className="secondary">
+            Logout
+          </button>
+        </div>
       </header>
 
       {error && <div className="alert alert--error">{error}</div>}
       {success && <div className="alert alert--success">{success}</div>}
 
-      <section className="dashboard__grid">
-        <article className="panel">
-          <div className="panel__header">
-            <div>
-              <h3>Platform Statistics</h3>
-              <p className="panel__description">
-                Overview of your TriGo platform activity
-              </p>
-            </div>
-            <button className="secondary" onClick={loadStats}>
-              Refresh Stats
-            </button>
-          </div>
-          <dl className="details">
-            <div>
-              <dt>Total Passengers</dt>
-              <dd>{stats?.passengers ?? stats?.total_passengers ?? stats?.passenger_count ?? 0}</dd>
-            </div>
-            <div>
-              <dt>Total Drivers</dt>
-              <dd>{stats?.drivers ?? stats?.total_drivers ?? stats?.driver_count ?? 0}</dd>
-            </div>
-            <div>
-              <dt>Active Rides</dt>
-              <dd>{stats?.active_rides ?? stats?.active_ride_count ?? stats?.rides_active ?? 0}</dd>
-            </div>
-            <div>
-              <dt>Today's Revenue</dt>
-              <dd>
-                ₱
-                {(stats?.today_revenue ?? stats?.revenue_today ?? stats?.today_revenue_amount ?? 0).toFixed(2)}
-              </dd>
-            </div>
-          </dl>
-        </article>
-
+      <div style={{ 
+        display: "grid", 
+        gridTemplateColumns: "1fr 1fr", 
+        gap: "1.5rem",
+        alignItems: "start"
+      }}>
+        {/* Driver Registration Requests - Left Side */}
         <article className="panel">
           <div className="panel__header">
             <div>
@@ -313,93 +532,33 @@ export default function AdminDashboard() {
             </div>
           ))}
         </article>
-      </section>
 
-      <section className="panel">
-        <div className="panel__header">
-          <div>
-            <h3>All Rides Monitor</h3>
-            <p className="panel__description">
-              Track all rides across the platform
-            </p>
-          </div>
-          <button className="secondary" onClick={loadRides}>
-            Refresh Data
-          </button>
-        </div>
-        {rides.length === 0 && (
-          <div className="panel__empty">
-            <p>No rides have been booked yet.</p>
-            <p className="text-muted">
-              Ride information will appear here as passengers book rides.
-            </p>
-          </div>
-        )}
-        {rides.length > 0 && (
-          <div className="table">
-            <div className="table__head">
-              <span>Ride #</span>
-              <span>Passenger</span>
-              <span>Driver</span>
-              <span>Route</span>
-              <span>Status</span>
-              <span>Fare</span>
-              <span>Date</span>
+        {/* All Rides Monitor - Right Side */}
+        <section className="panel">
+          <div className="panel__header">
+            <div>
+              <h3>All Rides Monitor</h3>
+              <p className="panel__description">
+                Track all rides across the platform
+              </p>
             </div>
-            {rides.map((ride) => (
-              <div className="table__row" key={ride.id}>
-                <span>#{ride.id}</span>
-                <span>
-                  {ride.passenger ? (
-                    <>
-                      <strong>{ride.passenger.name}</strong>
-                      {ride.passenger.email && (
-                        <>
-                          <br />
-                          <small className="text-muted">
-                            {ride.passenger.email}
-                          </small>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <span className="text-muted">Unknown</span>
-                  )}
-                </span>
-                <span>
-                  {ride.driver ? (
-                    <>
-                      <strong>{ride.driver.name}</strong>
-                      {ride.driver.vehicle_type && (
-                        <>
-                          <br />
-                          <small className="text-muted">
-                            {ride.driver.vehicle_type}
-                          </small>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    <span className="text-muted">Unassigned</span>
-                  )}
-                </span>
-                <span>
-                  <div style={{ fontSize: "0.875rem" }}>
-                    <strong>From:</strong>{" "}
-                    {ride.pickup_place?.name ||
-                      ride.pickup_address ||
-                      (ride.pickup_lat && ride.pickup_lng
-                        ? "Coordinates"
-                        : "N/A")}
-                  </div>
-                  <div style={{ fontSize: "0.875rem", marginTop: "0.25rem" }}>
-                    <strong>To:</strong>{" "}
-                    {ride.dropoff_place?.name ||
-                      ride.dropoff_address ||
-                      (ride.drop_lat && ride.drop_lng ? "Coordinates" : "N/A")}
-                  </div>
-                </span>
-                <span>
+            <button className="secondary" onClick={loadRides}>
+              Refresh Data
+            </button>
+          </div>
+          {rides.length === 0 && (
+            <div className="panel__empty">
+              <p>No rides have been booked yet.</p>
+              <p className="text-muted">
+                Ride information will appear here as passengers book rides.
+              </p>
+            </div>
+          )}
+          {rides.map((ride) => (
+            <div className="queue__item" key={ride.id}>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.5rem" }}>
+                  <h4 style={{ margin: 0 }}>Ride #{ride.id}</h4>
                   <span
                     className={`status status--${ride.status
                       ?.toLowerCase()
@@ -418,26 +577,86 @@ export default function AdminDashboard() {
                       "cancelled",
                     ].includes(ride.status) && ride.status}
                   </span>
-                </span>
-                <span>
-                  ₱{ride.fare ? parseFloat(ride.fare).toFixed(2) : "0.00"}
-                </span>
-                <span>
-                  {ride.created_at
-                    ? new Date(ride.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
-                    : "N/A"}
-                </span>
+                </div>
+                <div className="details" style={{ marginTop: "0.5rem" }}>
+                  <div>
+                    <dt>Passenger</dt>
+                    <dd>
+                      {ride.passenger ? (
+                        <>
+                          <strong>{ride.passenger.name}</strong>
+                          {ride.passenger.email && (
+                            <>
+                              <br />
+                              <small className="text-muted">
+                                {ride.passenger.email}
+                              </small>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-muted">Unknown</span>
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Route</dt>
+                    <dd>
+                      <div style={{ marginBottom: "0.5rem" }}>
+                        <strong>From:</strong>{" "}
+                        {ride.pickup_place?.name ||
+                          ride.pickup_address ||
+                          (ride.pickup_lat && ride.pickup_lng
+                            ? "Coordinates"
+                            : "Not provided")}
+                      </div>
+                      <div>
+                        <strong>To:</strong>{" "}
+                        {ride.dropoff_place?.name ||
+                          ride.dropoff_address ||
+                          (ride.drop_lat && ride.drop_lng ? "Coordinates" : "Not provided")}
+                      </div>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Driver & Date</dt>
+                    <dd>
+                      <div style={{ marginBottom: "0.5rem" }}>
+                        {ride.driver ? (
+                          <>
+                            <strong>{ride.driver.name}</strong>
+                            {ride.driver.vehicle_type && (
+                              <>
+                                <br />
+                                <small className="text-muted">
+                                  {ride.driver.vehicle_type}
+                                </small>
+                              </>
+                            )}
+                          </>
+                        ) : (
+                          <span className="text-muted">Unassigned</span>
+                        )}
+                      </div>
+                      <div>
+                        {ride.created_at
+                          ? new Date(ride.created_at).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
+                          : "N/A"}
+                      </div>
+                    </dd>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+            </div>
+          ))}
+        </section>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,525 @@
+/* Admin Dashboard Color Enhancements - Distinct from Passenger */
+
+/* Colorful Header Gradient - Orange/Red Theme */
+.admin-dashboard .dashboard__header {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%);
+  color: #1e293b;
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.15);
+}
+
+.admin-dashboard .dashboard__header h2 {
+  color: #ea580c !important;
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: none !important;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.admin-dashboard .dashboard__header p {
+  color: #64748b !important;
+}
+
+/* Colorful Panels with Different Accent Colors - Warm Theme */
+.admin-dashboard .panel:nth-child(1) {
+  border-left: 5px solid #f97316;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+}
+
+.admin-dashboard .panel:nth-child(2) {
+  border-left: 5px solid #ec4899;
+  background: linear-gradient(135deg, #ffffff 0%, #fdf2f8 100%);
+}
+
+.admin-dashboard .panel:nth-child(3) {
+  border-left: 5px solid #8b5cf6;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+}
+
+.admin-dashboard .panel:nth-child(4) {
+  border-left: 5px solid #06b6d4;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfeff 100%);
+}
+
+/* Colorful Panel Top Border - Warm Colors */
+.admin-dashboard .panel::before {
+  background: linear-gradient(90deg, #f97316, #ec4899, #8b5cf6, #06b6d4, #f97316);
+  background-size: 300% 100%;
+  height: 4px;
+  opacity: 0.7;
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+/* Enhanced Buttons - Orange/Pink Theme */
+.admin-dashboard button:not(.secondary):not(:disabled) {
+  background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.admin-dashboard button:not(.secondary):not(:disabled):hover {
+  background: linear-gradient(135deg, #ea580c 0%, #db2777 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+}
+
+.admin-dashboard .secondary {
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.admin-dashboard .secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #fbbf24;
+  color: #ea580c;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(249, 115, 22, 0.15);
+}
+
+/* Colorful Status Badges - Warm Theme */
+.admin-dashboard .status--pending {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #854d0e;
+  box-shadow: 0 1px 4px rgba(251, 191, 36, 0.2);
+}
+
+.admin-dashboard .status--assigned,
+.admin-dashboard .status--accepted {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+  color: #9a3412;
+  box-shadow: 0 1px 4px rgba(249, 115, 22, 0.2);
+}
+
+.admin-dashboard .status--picked-up,
+.admin-dashboard .status--picked_up {
+  background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+  color: #9f1239;
+  box-shadow: 0 1px 4px rgba(236, 72, 153, 0.2);
+}
+
+.admin-dashboard .status--completed {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+}
+
+.admin-dashboard .status--approved {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+}
+
+.admin-dashboard .status--rejected {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  box-shadow: 0 1px 4px rgba(239, 68, 68, 0.2);
+}
+
+/* Colorful Alerts */
+.admin-dashboard .alert--success {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-left: 4px solid #86efac;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.admin-dashboard .alert--error {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-left: 4px solid #fca5a5;
+  box-shadow: 0 2px 8px rgba(239, 68, 22, 0.15);
+}
+
+/* Colorful Form Inputs */
+.admin-dashboard input:focus,
+.admin-dashboard textarea:focus,
+.admin-dashboard select:focus {
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.3);
+}
+
+/* Colorful Queue Items */
+.admin-dashboard .queue__item {
+  border-left: 4px solid #fbbf24;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+}
+
+.admin-dashboard .queue__item:hover {
+  border-left-color: #f97316;
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+  transform: translateX(2px);
+  background: linear-gradient(135deg, #ffffff 0%, #ffedd5 100%);
+}
+
+.admin-dashboard .queue__item h4 {
+  color: #ea580c;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Colorful Details Grid */
+.admin-dashboard .details dt {
+  color: #f97316;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.admin-dashboard .details dd {
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+/* Colorful Background Gradient - Warm Theme */
+.admin-dashboard.dashboard {
+  background: linear-gradient(135deg, #f8fafc 0%, #fff7ed 25%, #fdf2f8 50%, #fff7ed 75%, #f8fafc 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Colorful Panel Headers */
+.admin-dashboard .panel h3 {
+  background: linear-gradient(135deg, #f97316 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Enhanced Shadows */
+.admin-dashboard .panel {
+  box-shadow: 0 4px 12px rgba(249, 115, 22, 0.1);
+  background: #ffffff;
+}
+
+.admin-dashboard .panel:hover {
+  box-shadow: 0 6px 16px rgba(249, 115, 22, 0.15);
+}
+
+/* Colorful Table Headers */
+.admin-dashboard .table__head {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-bottom: 2px solid #f97316;
+  font-weight: 600;
+  color: #ea580c;
+  font-size: 0.9375rem;
+}
+
+.admin-dashboard .table__row {
+  border-bottom: 1px solid #fed7aa;
+  transition: all 0.2s ease;
+}
+
+.admin-dashboard .table__row:hover {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffffff 100%);
+  transform: translateX(4px);
+}
+
+/* Colorful Search Bar - Glowing and Floating */
+.admin-dashboard input[type="text"] {
+  border: 2px solid #fed7aa !important;
+  transition: all 0.3s ease !important;
+  animation: floatSearch 3s ease-in-out infinite !important;
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4),
+              0 0 25px rgba(249, 115, 22, 0.3),
+              0 0 45px rgba(249, 115, 22, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  position: relative !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%) !important;
+  z-index: 1;
+}
+
+.admin-dashboard input[type="text"]:hover {
+  border-color: #f97316 !important;
+  box-shadow: 0 5px 25px rgba(249, 115, 22, 0.5),
+              0 0 30px rgba(249, 115, 22, 0.4),
+              0 0 50px rgba(249, 115, 22, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  transform: translateY(-2px) !important;
+}
+
+.admin-dashboard input[type="text"]:focus {
+  border-color: #f97316 !important;
+  box-shadow: 0 8px 35px rgba(249, 115, 22, 0.6),
+              0 0 40px rgba(249, 115, 22, 0.5),
+              0 0 60px rgba(249, 115, 22, 0.4),
+              0 0 0 4px rgba(249, 115, 22, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%) !important;
+  animation: floatSearch 3s ease-in-out infinite, pulseGlow 2s ease-in-out infinite !important;
+  transform: translateY(-3px) !important;
+  outline: none !important;
+}
+
+/* Search bar container - floating effect */
+.admin-dashboard .dashboard__header > div {
+  position: relative;
+}
+
+@keyframes floatSearch {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes floatContainer {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 8px 35px rgba(249, 115, 22, 0.6),
+                0 0 40px rgba(249, 115, 22, 0.5),
+                0 0 60px rgba(249, 115, 22, 0.4),
+                0 0 0 4px rgba(249, 115, 22, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  50% {
+    box-shadow: 0 10px 45px rgba(249, 115, 22, 0.7),
+                0 0 50px rgba(249, 115, 22, 0.6),
+                0 0 70px rgba(249, 115, 22, 0.5),
+                0 0 0 5px rgba(249, 115, 22, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* Search icon glow effect - Inside the search bar */
+.admin-dashboard .dashboard__header > div[style*="position: relative"] svg[viewBox="0 0 24 24"],
+.admin-dashboard .dashboard__header > div[style*="position: relative"] svg[stroke="currentColor"] {
+  position: absolute !important;
+  left: 1rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 20px !important;
+  height: 20px !important;
+  filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.6)) !important;
+  transition: all 0.3s ease !important;
+  z-index: 10 !important;
+  color: #f97316 !important;
+  pointer-events: none !important;
+  animation: iconPulse 2s ease-in-out infinite !important;
+}
+
+.admin-dashboard input[type="text"]:focus ~ svg,
+.admin-dashboard input[type="text"]:hover ~ svg,
+.admin-dashboard .dashboard__header > div:has(input[type="text"]:focus) svg,
+.admin-dashboard .dashboard__header > div:has(input[type="text"]:hover) svg {
+  filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.8)) !important;
+  color: #ea580c !important;
+  transform: translateY(-50%) scale(1.1) !important;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(249, 115, 22, 0.6));
+    opacity: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(249, 115, 22, 0.8));
+    opacity: 0.9;
+  }
+}
+
+/* Search bar wrapper glow - using class-based approach */
+.admin-dashboard .dashboard__header > div[style*="position: relative"][style*="flex: 1"]::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.2) 0%, transparent 70%);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* Colorful Notification Bell */
+.admin-dashboard .notification-bell__button {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+  border: 2px solid #93c5fd !important;
+  color: #1e40af !important;
+}
+
+.admin-dashboard .notification-bell__button:hover {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%) !important;
+  border-color: #60a5fa !important;
+}
+
+/* Colorful Panel Descriptions */
+.admin-dashboard .panel__description {
+  color: #64748b;
+  padding: 0.5rem 0;
+  border-left: 3px solid #fbbf24;
+  padding-left: 0.75rem;
+  background: rgba(255, 247, 237, 0.5);
+  border-radius: 0.25rem;
+}
+
+/* Colorful Action Buttons in Queue Items */
+.admin-dashboard .queue__actions button:not(.secondary) {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.admin-dashboard .queue__actions button:not(.secondary):hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.admin-dashboard .queue__actions button.secondary {
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+  border: 2px solid #fed7aa;
+  color: #ea580c;
+}
+
+.admin-dashboard .queue__actions button.secondary:hover {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #f97316;
+  color: #c2410c;
+}
+
+/* Colorful Statistics Panel */
+.admin-dashboard .panel:has(.details) {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #ecfdf5 100%);
+  border-left: 5px solid #10b981;
+}
+
+.admin-dashboard .panel:has(.details) .details dt {
+  color: #059669;
+}
+
+.admin-dashboard .panel:has(.details) .details dd {
+  color: #0f172a;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Colorful Refresh Buttons */
+.admin-dashboard .panel__header button.secondary {
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+  border: 2px solid #fed7aa;
+  color: #ea580c;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.admin-dashboard .panel__header button.secondary:hover {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border-color: #f97316;
+  color: #c2410c;
+  transform: translateY(-1px);
+}
+
+/* Colorful Empty States */
+.admin-dashboard .panel__empty {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 2px dashed #fed7aa;
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+.admin-dashboard .panel__empty p {
+  color: #9a3412;
+}
+
+/* Colorful Text Muted */
+.admin-dashboard .text-muted {
+  color: #94a3b8;
+}
+
+/* Special Styling for Feedbacks Page - Applied via inline styles */
+/* Feedbacks panel: Pink/Purple theme */
+/* Emergency Reports panel: Red theme */
+/* Trip History panel: Cyan theme */
+/* Passenger Accounts panel: Purple theme */
+/* Driver Accounts panel: Orange theme */
+
+/* Colorful Table Rows in Admin Pages */
+.admin-dashboard .table__row span strong {
+  color: #ea580c;
+  font-weight: 600;
+}
+
+.admin-dashboard .table__row:hover span strong {
+  color: #c2410c;
+}
+
+/* Colorful Rating Stars */
+.admin-dashboard .table__row span:has(span:contains("⭐")) {
+  font-size: 1rem;
+}
+
+/* Enhanced Panel Headers for Special Pages */
+.admin-dashboard .panel__header h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Colorful Empty States */
+.admin-dashboard .panel__empty {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  border: 2px dashed #fed7aa;
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+.admin-dashboard .panel__empty p {
+  color: #9a3412;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-dashboard .dashboard__header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .admin-dashboard .panel h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+}
+

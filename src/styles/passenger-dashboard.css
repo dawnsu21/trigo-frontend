@@ -1,0 +1,1421 @@
+/* Passenger Dashboard Color Enhancements - Light & Readable */
+
+/* Light Colorful Header Gradient */
+.passenger-dashboard .dashboard__header {
+  background: linear-gradient(135deg, #f0f4ff 0%, #f5f3ff 50%, #fef3ff 100%);
+  color: #1e293b;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.1);
+}
+
+.passenger-dashboard .dashboard__header h2 {
+  color: #4f46e5 !important;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: none !important;
+}
+
+.passenger-dashboard .dashboard__header p {
+  color: #64748b !important;
+}
+
+/* Light Colorful Panels with Different Accent Colors */
+.passenger-dashboard .panel:nth-child(1) {
+  border-left: 4px solid #93c5fd;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.passenger-dashboard .panel:nth-child(2) {
+  border-left: 4px solid #86efac;
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.passenger-dashboard .panel:nth-child(3) {
+  border-left: 4px solid #fcd34d;
+  background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
+}
+
+.passenger-dashboard .panel:nth-child(4) {
+  border-left: 4px solid #c4b5fd;
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+}
+
+/* Light Colorful Panel Top Border */
+.passenger-dashboard .panel::before {
+  background: linear-gradient(90deg, #dbeafe, #e0e7ff, #fce7f3, #fef3c7, #d1fae5, #dbeafe);
+  background-size: 300% 100%;
+  height: 3px;
+  opacity: 0.6;
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+/* Light Enhanced Buttons with Cool Animations */
+.passenger-dashboard button:not(.secondary):not(:disabled) {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  transform: scale(1);
+}
+
+.passenger-dashboard button:not(.secondary):not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.passenger-dashboard button:not(.secondary):not(:disabled):hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.2);
+  animation: buttonGlow 2s ease-in-out infinite;
+}
+
+.passenger-dashboard button:not(.secondary):not(:disabled):active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.passenger-dashboard button:not(.secondary):not(:disabled):active::before {
+  width: 300px;
+  height: 300px;
+}
+
+@keyframes buttonGlow {
+  0%, 100% {
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4), 0 0 20px rgba(99, 102, 241, 0.2);
+  }
+  50% {
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5), 0 0 30px rgba(99, 102, 241, 0.3);
+  }
+}
+
+.passenger-dashboard .secondary {
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  transform: scale(1);
+}
+
+.passenger-dashboard .secondary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.passenger-dashboard .secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-color: #c7d2fe;
+  color: #6366f1;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.passenger-dashboard .secondary:hover:not(:disabled)::after {
+  left: 100%;
+}
+
+.passenger-dashboard .secondary:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Light Colorful Status Badges */
+.passenger-dashboard .status--pending {
+  background: linear-gradient(135deg, #fef9c3 0%, #fef3c7 100%);
+  color: #854d0e;
+  box-shadow: 0 1px 4px rgba(251, 191, 36, 0.2);
+}
+
+.passenger-dashboard .status--assigned,
+.passenger-dashboard .status--accepted {
+  background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+  color: #1e40af;
+  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.2);
+}
+
+.passenger-dashboard .status--picked-up,
+.passenger-dashboard .status--picked_up {
+  background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%);
+  color: #5b21b6;
+  box-shadow: 0 1px 4px rgba(139, 92, 246, 0.2);
+}
+
+.passenger-dashboard .status--completed {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+}
+
+/* Light Colorful Alerts */
+.passenger-dashboard .alert--success {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-left: 4px solid #86efac;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.passenger-dashboard .alert--error {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-left: 4px solid #fca5a5;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+}
+
+/* Light Colorful Form Inputs */
+.passenger-dashboard input:focus,
+.passenger-dashboard textarea:focus,
+.passenger-dashboard select:focus {
+  border-color: #c7d2fe;
+  box-shadow: 0 0 0 3px rgba(199, 210, 254, 0.3);
+}
+
+/* Light Colorful Queue Items */
+.passenger-dashboard .queue__item {
+  border-left: 4px solid #c7d2fe;
+  transition: all 0.3s ease;
+}
+
+.passenger-dashboard .queue__item:hover {
+  border-left-color: #a5b4fc;
+  box-shadow: 0 4px 12px rgba(199, 210, 254, 0.2);
+  transform: translateX(2px);
+}
+
+/* Light Colorful Details Grid */
+.passenger-dashboard .details dt {
+  color: #6366f1;
+  font-weight: 600;
+}
+
+.passenger-dashboard .details dd {
+  color: #334155;
+}
+
+/* Light Colorful Announcements */
+.passenger-dashboard .panel[style*="border-left: '4px solid #3b82f6'"] {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border-left: 4px solid #93c5fd !important;
+}
+
+/* Light Profile Button Enhancement */
+.passenger-dashboard button[style*="display: 'flex'"] {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 2px solid #e2e8f0;
+  color: #475569;
+  transition: all 0.3s ease;
+}
+
+.passenger-dashboard button[style*="display: 'flex'"]:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-color: #c7d2fe;
+  color: #6366f1;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(199, 210, 254, 0.2);
+}
+
+/* View Booking Button */
+.passenger-dashboard button[style*="backgroundColor"] {
+  transition: all 0.3s ease;
+}
+
+/* Unique and Neat Background Design */
+.passenger-dashboard.dashboard {
+  position: relative;
+  background: linear-gradient(135deg, #f0f4ff 0%, #f5f3ff 25%, #f0f9ff 50%, #faf5ff 75%, #f0f4ff 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 25s ease infinite;
+  overflow: hidden;
+}
+
+.passenger-dashboard.dashboard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 90% 30%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
+  background-position: 0% 0%, 100% 100%, 50% 50%, 100% 0%;
+  animation: backgroundFloat 30s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.passenger-dashboard.dashboard::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 100px,
+      rgba(99, 102, 241, 0.02) 100px,
+      rgba(99, 102, 241, 0.02) 200px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 100px,
+      rgba(139, 92, 246, 0.02) 100px,
+      rgba(139, 92, 246, 0.02) 200px
+    );
+  animation: patternRotate 60s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.5;
+}
+
+/* Ensure content is above background */
+.passenger-dashboard.dashboard > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes backgroundFloat {
+  0%, 100% {
+    background-position: 0% 0%, 100% 100%, 50% 50%, 100% 0%;
+    opacity: 1;
+  }
+  33% {
+    background-position: 20% 20%, 80% 80%, 60% 40%, 80% 20%;
+    opacity: 0.8;
+  }
+  66% {
+    background-position: 10% 10%, 90% 90%, 40% 60%, 90% 10%;
+    opacity: 0.9;
+  }
+}
+
+@keyframes patternRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Add floating geometric shapes */
+.passenger-dashboard.dashboard {
+  background-attachment: fixed;
+}
+
+/* Subtle grid pattern overlay */
+.passenger-dashboard.dashboard {
+  background-image: 
+    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-position: 0 0, 0 0;
+}
+
+/* Add animated decorative circles */
+.passenger-dashboard.dashboard {
+  position: relative;
+}
+
+/* Floating orbs effect */
+@keyframes floatOrb1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+    opacity: 0.5;
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+    opacity: 0.3;
+  }
+}
+
+@keyframes floatOrb2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(1.2);
+    opacity: 0.4;
+  }
+}
+
+@keyframes floatOrb3 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.35;
+  }
+  25% {
+    transform: translate(50px, 20px) scale(0.8);
+    opacity: 0.45;
+  }
+  75% {
+    transform: translate(-30px, -40px) scale(1.1);
+    opacity: 0.25;
+  }
+}
+
+/* Enhanced panel styling to stand out on new background */
+.passenger-dashboard .panel {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.passenger-dashboard .panel:hover {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
+}
+
+/* Header enhancement */
+.passenger-dashboard .dashboard__header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(99, 102, 241, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+/* Light Colorful Panel Headers */
+.passenger-dashboard .panel h3 {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Light Enhanced Shadows */
+.passenger-dashboard .panel {
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.08);
+  background: #ffffff;
+}
+
+.passenger-dashboard .panel:hover {
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.12);
+}
+
+/* Floating Panels - Book a Ride & Current Ride */
+.passenger-dashboard .floating-panel {
+  position: relative;
+  z-index: 10;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+/* Book a Ride - Colorful Blue/Purple Theme */
+.passenger-dashboard .floating-panel--book-ride {
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 50%, #f5f3ff 100%);
+  border: 2px solid #c7d2fe;
+  border-left: 6px solid #6366f1;
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+}
+
+.passenger-dashboard .floating-panel--book-ride::before {
+  background: linear-gradient(90deg, #6366f1, #8b5cf6, #a855f7, #6366f1);
+  background-size: 300% 100%;
+  height: 4px;
+  opacity: 0.8;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.passenger-dashboard .floating-panel--book-ride h3 {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.5rem;
+}
+
+.passenger-dashboard .floating-panel--book-ride:hover {
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+  border-color: #c7d2fe;
+}
+
+/* Current Ride - Colorful Green/Teal Theme */
+.passenger-dashboard .floating-panel--current-ride {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #ecfdf5 100%);
+  border: 2px solid #86efac;
+  border-left: 6px solid #10b981;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+}
+
+.passenger-dashboard .floating-panel--current-ride::before {
+  background: linear-gradient(90deg, #10b981, #14b8a6, #06b6d4, #10b981);
+  background-size: 300% 100%;
+  height: 4px;
+  opacity: 0.8;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.passenger-dashboard .floating-panel--current-ride h3 {
+  background: linear-gradient(135deg, #10b981 0%, #14b8a6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.5rem;
+}
+
+.passenger-dashboard .floating-panel--current-ride:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(16, 185, 129, 0.25);
+  border-color: #4ade80;
+}
+
+/* Colorful Form Sections in Floating Panels */
+.passenger-dashboard .floating-panel--book-ride .form__section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e0e7ff;
+  margin-bottom: 1.5rem;
+}
+
+.passenger-dashboard .floating-panel--book-ride .form__section h4 {
+  color: #6366f1;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.passenger-dashboard .floating-panel--book-ride .form__section h4::before {
+  content: "📍";
+  font-size: 1.25rem;
+}
+
+.passenger-dashboard .floating-panel--book-ride label[for*="notes"] {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e0e7ff;
+}
+
+/* Colorful Details in Current Ride */
+.passenger-dashboard .floating-panel--current-ride .details {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #bbf7d0;
+}
+
+.passenger-dashboard .floating-panel--current-ride .details dt {
+  color: #059669;
+  font-weight: 700;
+}
+
+.passenger-dashboard .floating-panel--current-ride .details dd {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* Colorful Buttons in Floating Panels with Advanced Animations */
+.passenger-dashboard .floating-panel--book-ride button[type="submit"]:not(:disabled) {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
+  transform: scale(1);
+}
+
+.passenger-dashboard .floating-panel--book-ride button[type="submit"]:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.6s;
+}
+
+.passenger-dashboard .floating-panel--book-ride button[type="submit"]:not(:disabled):hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.6), 0 0 30px rgba(99, 102, 241, 0.3);
+  animation: submitPulse 1.5s ease-in-out infinite;
+}
+
+.passenger-dashboard .floating-panel--book-ride button[type="submit"]:not(:disabled):hover::before {
+  left: 100%;
+}
+
+.passenger-dashboard .floating-panel--book-ride button[type="submit"]:not(:disabled):active {
+  transform: translateY(-2px) scale(1.02);
+  animation: none;
+}
+
+@keyframes submitPulse {
+  0%, 100% {
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.6), 0 0 30px rgba(99, 102, 241, 0.3);
+  }
+  50% {
+    box-shadow: 0 12px 35px rgba(99, 102, 241, 0.7), 0 0 40px rgba(99, 102, 241, 0.4);
+  }
+}
+
+.passenger-dashboard .floating-panel--current-ride button.secondary {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+  border: 2px solid #86efac;
+  color: #059669;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.passenger-dashboard .floating-panel--current-ride button.secondary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.passenger-dashboard .floating-panel--current-ride button.secondary:hover {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #4ade80;
+  color: #047857;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.passenger-dashboard .floating-panel--current-ride button.secondary:hover::after {
+  width: 200px;
+  height: 200px;
+}
+
+.passenger-dashboard .floating-panel--current-ride button.secondary:active {
+  transform: translateY(-1px) scale(1);
+}
+
+/* Responsive - Make floating panels stack on mobile */
+@media (max-width: 1024px) {
+  .passenger-dashboard .floating-panel {
+    position: relative;
+    top: 0;
+  }
+}
+
+/* Add colorful accent to panel descriptions */
+.passenger-dashboard .floating-panel .panel__description {
+  color: #475569;
+  font-weight: 500;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 0.5rem;
+  border-left: 3px solid;
+}
+
+.passenger-dashboard .floating-panel--book-ride .panel__description {
+  border-left-color: #c7d2fe;
+}
+
+.passenger-dashboard .floating-panel--current-ride .panel__description {
+  border-left-color: #86efac;
+}
+
+/* Clean Current Ride Styling */
+.passenger-dashboard .current-ride-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Ride Header */
+.passenger-dashboard .ride-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-radius: 0.75rem;
+  border: 1px solid #bbf7d0;
+}
+
+.passenger-dashboard .ride-id-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.passenger-dashboard .ride-id {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+.passenger-dashboard .ride-driver {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+  text-align: right;
+}
+
+.passenger-dashboard .driver-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.passenger-dashboard .driver-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.passenger-dashboard .driver-name strong {
+  color: #059669;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+/* Route Information */
+.passenger-dashboard .route-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem;
+  background: white;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+}
+
+.passenger-dashboard .route-item {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.passenger-dashboard .route-item.pickup {
+  padding-bottom: 0.75rem;
+  border-bottom: 2px dashed #e2e8f0;
+}
+
+.passenger-dashboard .route-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-radius: 0.5rem;
+  border: 1px solid #bbf7d0;
+}
+
+.passenger-dashboard .route-item.pickup .route-icon {
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  border-color: #93c5fd;
+}
+
+.passenger-dashboard .route-item.dropoff .route-icon {
+  background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+  border-color: #fca5a5;
+}
+
+.passenger-dashboard .route-details {
+  flex: 1;
+}
+
+.passenger-dashboard .route-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.passenger-dashboard .route-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.passenger-dashboard .route-address {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.passenger-dashboard .route-arrow {
+  text-align: center;
+  font-size: 1.5rem;
+  color: #10b981;
+  font-weight: 700;
+  margin: -0.5rem 0;
+}
+
+/* Driver Information Card */
+.passenger-dashboard .driver-info-card {
+  padding: 1.25rem;
+  background: white;
+  border-radius: 0.75rem;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.passenger-dashboard .status-alert {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.passenger-dashboard .status-alert--warning {
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  color: #92400e;
+}
+
+.passenger-dashboard .status-alert--info {
+  background: #dbeafe;
+  border: 1px solid #3b82f6;
+  color: #1e40af;
+}
+
+.passenger-dashboard .status-alert--success {
+  background: #dcfce7;
+  border: 1px solid #10b981;
+  color: #065f46;
+}
+
+.passenger-dashboard .driver-header {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.passenger-dashboard .driver-name-rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.passenger-dashboard .driver-name-rating h4 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.passenger-dashboard .driver-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 0.5rem;
+  color: #92400e;
+  font-size: 0.875rem;
+}
+
+.passenger-dashboard .driver-rating strong {
+  font-size: 1rem;
+}
+
+/* Contact Section */
+.passenger-dashboard .driver-contact {
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.passenger-dashboard .contact-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.passenger-dashboard .contact-number {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+  font-family: monospace;
+}
+
+.passenger-dashboard .call-button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  text-decoration: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+  position: relative;
+  overflow: hidden;
+  transform: scale(1);
+}
+
+.passenger-dashboard .call-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.passenger-dashboard .call-button:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+  animation: callButtonRing 1s ease-in-out infinite;
+}
+
+.passenger-dashboard .call-button:hover::before {
+  left: 100%;
+}
+
+.passenger-dashboard .call-button:active {
+  transform: translateY(0) scale(0.98);
+  animation: none;
+}
+
+@keyframes callButtonRing {
+  0%, 100% {
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+  }
+}
+
+/* Vehicle Info */
+.passenger-dashboard .vehicle-info,
+.passenger-dashboard .driver-location {
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.passenger-dashboard .info-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.passenger-dashboard .info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.passenger-dashboard .info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.passenger-dashboard .info-key {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.passenger-dashboard .info-value {
+  font-size: 0.9375rem;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.passenger-dashboard .plate-number {
+  font-family: monospace;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+}
+
+.passenger-dashboard .location-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 0.25rem;
+}
+
+.passenger-dashboard .location-address {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.passenger-dashboard .distance-badge {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 0.375rem;
+  color: #0369a1;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.passenger-dashboard .no-driver-message {
+  padding: 1.5rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9375rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 0.5rem;
+  border: 1px dashed #cbd5e1;
+}
+
+/* Action Buttons */
+.passenger-dashboard .ride-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.passenger-dashboard .cancel-button {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+  position: relative;
+  overflow: hidden;
+  transform: scale(1);
+}
+
+.passenger-dashboard .cancel-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.5s, height 0.5s;
+}
+
+.passenger-dashboard .cancel-button:hover:not(.disabled) {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4), 0 0 20px rgba(239, 68, 68, 0.2);
+  animation: cancelShake 0.5s ease-in-out;
+}
+
+.passenger-dashboard .cancel-button:hover:not(.disabled)::before {
+  width: 300px;
+  height: 300px;
+}
+
+.passenger-dashboard .cancel-button:active:not(.disabled) {
+  transform: translateY(-1px) scale(1);
+  animation: none;
+}
+
+.passenger-dashboard .cancel-button.disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none !important;
+}
+
+@keyframes cancelShake {
+  0%, 100% { transform: translateY(-3px) scale(1.03) translateX(0); }
+  25% { transform: translateY(-3px) scale(1.03) translateX(-2px); }
+  75% { transform: translateY(-3px) scale(1.03) translateX(2px); }
+}
+
+.passenger-dashboard .cancel-info {
+  padding: 0.75rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.875rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+/* Additional Cool Button Animations */
+
+/* Loading Button Animation */
+.passenger-dashboard button:disabled {
+  position: relative;
+  overflow: hidden;
+}
+
+.passenger-dashboard button:disabled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+/* Header Buttons Special Animations */
+.passenger-dashboard .dashboard__header button {
+  position: relative;
+  overflow: hidden;
+}
+
+.passenger-dashboard .dashboard__header button:not(:disabled)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.passenger-dashboard .dashboard__header button:not(:disabled):hover::before {
+  left: 100%;
+}
+
+/* Bounce Animation for Important Actions */
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.passenger-dashboard button[type="submit"]:not(:disabled) {
+  animation: bounceIn 0.5s ease-out;
+}
+
+/* Smooth Scale on Focus */
+.passenger-dashboard button:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  transform: scale(1.02);
+}
+
+/* Ripple Effect on Click */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.passenger-dashboard button:not(:disabled) {
+  position: relative;
+}
+
+.passenger-dashboard button:not(:disabled):active::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%) scale(0);
+  animation: ripple 0.6s ease-out;
+}
+
+/* Change Location Button - Special Animation */
+.passenger-dashboard .change-location-button,
+.change-location-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+  border: 2px solid #c7d2fe !important;
+  color: #6366f1 !important;
+}
+
+.change-location-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.15), transparent);
+  transition: left 0.6s ease;
+}
+
+.change-location-button::after {
+  content: '🔄';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(0deg) scale(0);
+  font-size: 1.2rem;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  opacity: 0;
+}
+
+.change-location-button:hover {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+  border-color: #a5b4fc !important;
+  color: #4f46e5 !important;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3), 0 0 20px rgba(99, 102, 241, 0.15);
+  animation: locationButtonBounce 0.6s ease-out;
+}
+
+.change-location-button:hover::before {
+  left: 100%;
+}
+
+.change-location-button:hover::after {
+  transform: translate(-50%, -50%) rotate(360deg) scale(1);
+  opacity: 1;
+}
+
+.change-location-button:active {
+  transform: translateY(-1px) scale(1.02);
+  animation: locationButtonSpin 0.3s ease-out;
+}
+
+.change-location-button:active::after {
+  transform: translate(-50%, -50%) rotate(720deg) scale(1.2);
+}
+
+@keyframes locationButtonBounce {
+  0% {
+    transform: translateY(-3px) scale(1.05);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.08);
+  }
+  100% {
+    transform: translateY(-3px) scale(1.05);
+  }
+}
+
+@keyframes locationButtonSpin {
+  0% {
+    transform: translateY(-1px) scale(1.02) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-1px) scale(1.02) rotate(360deg);
+  }
+}
+
+/* Colorful Search Bar - Glowing and Floating - Passenger Theme */
+.passenger-dashboard input[type="text"] {
+  border: 2px solid #c4b5fd !important;
+  transition: all 0.3s ease !important;
+  animation: floatSearchPassenger 3s ease-in-out infinite !important;
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4),
+              0 0 25px rgba(99, 102, 241, 0.3),
+              0 0 45px rgba(139, 92, 246, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  position: relative !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%) !important;
+  z-index: 1;
+}
+
+.passenger-dashboard input[type="text"]:hover {
+  border-color: #6366f1 !important;
+  box-shadow: 0 5px 25px rgba(99, 102, 241, 0.5),
+              0 0 30px rgba(99, 102, 241, 0.4),
+              0 0 50px rgba(139, 92, 246, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  transform: translateY(-2px) !important;
+}
+
+.passenger-dashboard input[type="text"]:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 8px 35px rgba(99, 102, 241, 0.6),
+              0 0 40px rgba(99, 102, 241, 0.5),
+              0 0 60px rgba(139, 92, 246, 0.4),
+              0 0 0 4px rgba(99, 102, 241, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%) !important;
+  animation: floatSearchPassenger 3s ease-in-out infinite, pulseGlowPassenger 2s ease-in-out infinite !important;
+  transform: translateY(-3px) !important;
+  outline: none !important;
+}
+
+/* Search bar container - floating effect */
+.passenger-dashboard .dashboard__header > div {
+  position: relative;
+}
+
+@keyframes floatSearchPassenger {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pulseGlowPassenger {
+  0%, 100% {
+    box-shadow: 0 8px 35px rgba(99, 102, 241, 0.6),
+                0 0 40px rgba(99, 102, 241, 0.5),
+                0 0 60px rgba(139, 92, 246, 0.4),
+                0 0 0 4px rgba(99, 102, 241, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  50% {
+    box-shadow: 0 10px 45px rgba(99, 102, 241, 0.7),
+                0 0 50px rgba(99, 102, 241, 0.6),
+                0 0 70px rgba(139, 92, 246, 0.5),
+                0 0 0 5px rgba(99, 102, 241, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* Search icon glow effect - Inside the search bar */
+.passenger-dashboard .dashboard__header > div[style*="position: relative"] svg[viewBox="0 0 24 24"],
+.passenger-dashboard .dashboard__header > div[style*="position: relative"] svg[stroke="currentColor"] {
+  position: absolute !important;
+  left: 1rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 20px !important;
+  height: 20px !important;
+  filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6)) !important;
+  transition: all 0.3s ease !important;
+  z-index: 10 !important;
+  color: #6366f1 !important;
+  pointer-events: none !important;
+  animation: iconPulsePassenger 2s ease-in-out infinite !important;
+}
+
+.passenger-dashboard input[type="text"]:focus ~ svg,
+.passenger-dashboard input[type="text"]:hover ~ svg,
+.passenger-dashboard .dashboard__header > div:has(input[type="text"]:focus) svg,
+.passenger-dashboard .dashboard__header > div:has(input[type="text"]:hover) svg {
+  filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.8)) !important;
+  color: #4f46e5 !important;
+  transform: translateY(-50%) scale(1.1) !important;
+}
+
+@keyframes iconPulsePassenger {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.6));
+    opacity: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.8));
+    opacity: 0.9;
+  }
+}
+
+/* Search bar wrapper glow - using class-based approach */
+.passenger-dashboard .dashboard__header > div[style*="position: relative"][style*="flex: 1"]::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowPulsePassenger 3s ease-in-out infinite;
+}
+
+@keyframes glowPulsePassenger {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+

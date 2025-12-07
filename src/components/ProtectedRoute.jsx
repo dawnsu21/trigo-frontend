@@ -8,7 +8,18 @@ export function ProtectedRoute({ children, allowedRoles }) {
     return <Navigate to="/" replace />
   }
 
-  if (allowedRoles && allowedRoles.length > 0 && !allowedRoles.includes(role)) {
+  // Make role comparison case-insensitive
+  const roleLower = role?.toLowerCase() || ''
+  const allowedRolesLower = allowedRoles?.map(r => r?.toLowerCase()) || []
+
+  if (allowedRoles && allowedRoles.length > 0 && !allowedRolesLower.includes(roleLower)) {
+    console.warn("[ProtectedRoute] Role mismatch:", {
+      userRole: role,
+      userRoleLower: roleLower,
+      allowedRoles,
+      allowedRolesLower,
+      isAuthenticated
+    })
     return <Navigate to="/" replace />
   }
 
