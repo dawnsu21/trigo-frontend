@@ -59,7 +59,7 @@ export default function LandingPage() {
   return (
     <main className="landing">
       <section className="landing__hero">
-        <h1>RidePilot Portal</h1>
+        <h1>TriGO BOOKING</h1>
         <p>Log in to continue.</p>
       </section>
 

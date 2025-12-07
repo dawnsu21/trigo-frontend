@@ -21,11 +21,16 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  padding: 0.5rem;
+  padding: 0.75rem;
   border-radius: 0.5rem;
   transition: all 0.2s ease;
   z-index: 100003;
   pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  min-height: 3rem;
 }
 
 .notification-bell__button:hover {

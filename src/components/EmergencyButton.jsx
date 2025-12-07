@@ -80,8 +80,12 @@ export default function EmergencyButton({ token, rideId = null, userRole = 'pass
         description: formData.description,
       }
 
-      if (rideId) {
-        payload.ride_id = rideId
+      // Always include ride_id to prevent backend "Undefined array key" error
+      // Set to null if not provided, so backend can handle it
+      if (rideId && rideId !== null && rideId !== undefined && rideId !== '') {
+        payload.ride_id = parseInt(rideId)
+      } else {
+        payload.ride_id = null
       }
 
       if (formData.latitude && formData.longitude) {
@@ -144,8 +148,14 @@ export default function EmergencyButton({ token, rideId = null, userRole = 'pass
           setIsOpen(true)
         }}
         aria-label="Report Emergency"
+        style={{
+          backgroundColor: '#ef4444',
+          color: 'white',
+          border: 'none',
+          boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)',
+        }}
       >
-        🚨 Emergency
+Emergency
       </button>
 
       {isOpen &&

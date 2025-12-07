@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { fetchDriverProfile, fetchDriverHistory } from "../../services/driverService";
 import "../../styles/dashboard.css";
+import "../../styles/driver-dashboard.css";
 
 export default function DriverProfile() {
   const { token, user, logout } = useAuth();
@@ -164,7 +165,7 @@ export default function DriverProfile() {
 
   if (loading) {
     return (
-      <div className="dashboard">
+      <div className="dashboard driver-dashboard">
         <div style={{ textAlign: 'center', padding: '2rem' }}>
           <p>Loading profile...</p>
         </div>
@@ -173,7 +174,7 @@ export default function DriverProfile() {
   }
 
   return (
-    <div className="dashboard">
+    <div className="dashboard driver-dashboard">
       <header className="dashboard__header">
         <div>
           <h2>My Profile</h2>

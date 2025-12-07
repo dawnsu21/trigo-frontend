@@ -5,12 +5,20 @@ import PassengerSignup from '../pages/passenger/PassengerSignup'
 import PassengerLogin from '../pages/passenger/PassengerLogin'
 import PassengerDashboard from '../pages/passenger/PassengerDashboard.jsx'
 import PassengerProfile from '../pages/passenger/PassengerProfile'
+import ViewBooking from '../pages/passenger/ViewBooking'
 import DriverLogin from '../pages/driver/DriverLogin'
 import DriverSignup from '../pages/driver/DriverSignup'
 import DriverDashboard from '../pages/driver/DriverDashboard'
 import DriverProfile from '../pages/driver/DriverProfile'
+import DriverTripHistory from '../pages/driver/DriverTripHistory'
+import DriverFeedbacks from '../pages/driver/DriverFeedbacks'
 import AdminLogin from '../pages/admin/AdminLogin'
 import AdminDashboard from '../pages/admin/AdminDashboard'
+import AllAccounts from '../pages/admin/AllAccounts'
+import PassengerAccounts from '../pages/admin/PassengerAccounts'
+import PassengerFeedbacks from '../pages/admin/PassengerFeedbacks'
+import TripHistory from '../pages/admin/TripHistory'
+import Statistics from '../pages/admin/Statistics'
 import { ProtectedRoute } from '../components/ProtectedRoute'
 
 function NotFound() {
@@ -46,6 +54,14 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/passenger/view-booking"
+            element={
+              <ProtectedRoute allowedRoles={['passenger']}>
+                <ViewBooking />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="/driver/login" element={<DriverLogin />} />
           <Route path="/driver/signup" element={<DriverSignup />} />
@@ -65,6 +81,22 @@ export default function AppRouter() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/driver/trip-history"
+            element={
+              <ProtectedRoute allowedRoles={['driver']}>
+                <DriverTripHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/driver/feedbacks"
+            element={
+              <ProtectedRoute allowedRoles={['driver']}>
+                <DriverFeedbacks />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route
@@ -72,6 +104,46 @@ export default function AppRouter() {
             element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/accounts"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AllAccounts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/passengers"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <PassengerAccounts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/feedbacks"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <PassengerFeedbacks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/trip-history"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <TripHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/statistics"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <Statistics />
               </ProtectedRoute>
             }
           />

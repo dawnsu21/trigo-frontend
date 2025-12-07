@@ -1,0 +1,472 @@
+/* Driver Dashboard Color Enhancements - Distinct Green/Blue Theme */
+
+/* Colorful Header Gradient - Green/Blue Theme */
+.driver-dashboard .dashboard__header {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%);
+  color: #1e293b;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+}
+
+.driver-dashboard .dashboard__header h2 {
+  color: #059669 !important;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  text-shadow: none !important;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.driver-dashboard .dashboard__header p {
+  color: #64748b !important;
+}
+
+/* Colorful Panels with Different Accent Colors - Green/Blue Theme */
+.driver-dashboard .panel:nth-child(1) {
+  border-left: 5px solid #10b981;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+}
+
+.driver-dashboard .panel:nth-child(2) {
+  border-left: 5px solid #06b6d4;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfeff 100%);
+}
+
+.driver-dashboard .panel:nth-child(3) {
+  border-left: 5px solid #3b82f6;
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+}
+
+.driver-dashboard .panel:nth-child(4) {
+  border-left: 5px solid #8b5cf6;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+}
+
+/* Colorful Panel Top Border - Green/Blue Colors */
+.driver-dashboard .panel::before {
+  background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6, #8b5cf6, #10b981);
+  background-size: 300% 100%;
+  height: 4px;
+  opacity: 0.7;
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Enhanced Buttons - Green/Blue Theme */
+.driver-dashboard button:not(.secondary):not(:disabled) {
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  transition: all 0.3s ease;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+.driver-dashboard button:not(.secondary):not(:disabled):hover {
+  background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.driver-dashboard .secondary {
+  border: 2px solid #e2e8f0;
+  background: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.driver-dashboard .secondary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #10b981;
+  color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+/* Colorful Status Badges - Green/Blue Theme */
+.driver-dashboard .status--pending,
+.driver-dashboard .status--requested {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #854d0e;
+  box-shadow: 0 1px 4px rgba(251, 191, 36, 0.2);
+}
+
+.driver-dashboard .status--assigned {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.2);
+}
+
+.driver-dashboard .status--accepted {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+}
+
+.driver-dashboard .status--picked-up,
+.driver-dashboard .status--picked_up,
+.driver-dashboard .status--in-progress {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #3730a3;
+  box-shadow: 0 1px 4px rgba(99, 102, 241, 0.2);
+}
+
+.driver-dashboard .status--completed {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  color: #065f46;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2);
+}
+
+/* Colorful Alerts */
+.driver-dashboard .alert--success {
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-left: 4px solid #86efac;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.driver-dashboard .alert--error {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-left: 4px solid #fca5a5;
+  box-shadow: 0 2px 8px rgba(239, 68, 22, 0.15);
+}
+
+/* Colorful Form Inputs */
+.driver-dashboard input:focus,
+.driver-dashboard textarea:focus,
+.driver-dashboard select:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+/* Colorful Queue Items */
+.driver-dashboard .queue__item {
+  border-left: 4px solid #10b981;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+}
+
+.driver-dashboard .queue__item:hover {
+  border-left-color: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  transform: translateX(2px);
+  background: linear-gradient(135deg, #ffffff 0%, #d1fae5 100%);
+}
+
+.driver-dashboard .queue__item h4 {
+  color: #059669;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Colorful Details Grid */
+.driver-dashboard .details dt {
+  color: #10b981;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.driver-dashboard .details dd {
+  color: #334155;
+  font-weight: 500;
+  font-size: 0.9375rem;
+}
+
+/* Colorful Background Gradient - Green/Blue Theme */
+.driver-dashboard.dashboard {
+  background: linear-gradient(135deg, #f8fafc 0%, #ecfdf5 25%, #ecfeff 50%, #ecfdf5 75%, #f8fafc 100%);
+  background-size: 400% 400%;
+  animation: gradientShift 20s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Colorful Panel Headers */
+.driver-dashboard .panel h3 {
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Enhanced Shadows */
+.driver-dashboard .panel {
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+  background: #ffffff;
+}
+
+.driver-dashboard .panel:hover {
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.15);
+}
+
+/* Colorful Table Headers */
+.driver-dashboard .table__head {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-bottom: 2px solid #10b981;
+  font-weight: 600;
+  color: #059669;
+  font-size: 0.9375rem;
+}
+
+.driver-dashboard .table__row {
+  border-bottom: 1px solid #a7f3d0;
+  transition: all 0.2s ease;
+}
+
+.driver-dashboard .table__row:hover {
+  background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+  transform: translateX(4px);
+}
+
+/* Colorful Panel Descriptions */
+.driver-dashboard .panel__description {
+  color: #64748b;
+  padding: 0.5rem 0;
+  border-left: 3px solid #10b981;
+  padding-left: 0.75rem;
+  background: rgba(236, 253, 245, 0.5);
+  border-radius: 0.25rem;
+}
+
+/* Colorful Action Buttons in Queue Items */
+.driver-dashboard .queue__actions button:not(.secondary) {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.driver-dashboard .queue__actions button:not(.secondary):hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.driver-dashboard .queue__actions button.secondary {
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+  border: 2px solid #a7f3d0;
+  color: #059669;
+}
+
+.driver-dashboard .queue__actions button.secondary:hover {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #10b981;
+  color: #047857;
+}
+
+/* Colorful Refresh Buttons */
+.driver-dashboard .panel__header button.secondary {
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+  border: 2px solid #a7f3d0;
+  color: #059669;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.driver-dashboard .panel__header button.secondary:hover {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #10b981;
+  color: #047857;
+  transform: translateY(-1px);
+}
+
+/* Colorful Empty States */
+.driver-dashboard .panel__empty {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 2px dashed #a7f3d0;
+  border-radius: 0.75rem;
+  padding: 2rem;
+}
+
+.driver-dashboard .panel__empty p {
+  color: #047857;
+  font-weight: 500;
+}
+
+/* Colorful Text Muted */
+.driver-dashboard .text-muted {
+  color: #94a3b8;
+}
+
+/* Special styling for online status panel */
+.driver-dashboard .panel:has(h3:contains("Online Status")) {
+  border-left: 5px solid #10b981;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%);
+}
+
+/* Special styling for location update panel */
+.driver-dashboard .panel:has(h3:contains("Update Your Location")) {
+  border-left: 5px solid #06b6d4;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfeff 100%);
+}
+
+/* Special styling for available rides panel */
+.driver-dashboard .panel:has(h3:contains("Available Rides")) {
+  border-left: 5px solid #3b82f6;
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+}
+
+/* Special styling for trip history panel */
+.driver-dashboard .panel:has(h3:contains("Trip History")) {
+  border-left: 5px solid #8b5cf6;
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+}
+
+/* Colorful Search Bar - Glowing and Floating */
+.driver-dashboard input[type="text"] {
+  border: 2px solid #a7f3d0 !important;
+  transition: all 0.3s ease !important;
+  animation: floatSearch 3s ease-in-out infinite !important;
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4),
+              0 0 25px rgba(16, 185, 129, 0.3),
+              0 0 45px rgba(16, 185, 129, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  position: relative !important;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%) !important;
+  z-index: 1;
+}
+
+.driver-dashboard input[type="text"]:hover {
+  border-color: #10b981 !important;
+  box-shadow: 0 5px 25px rgba(16, 185, 129, 0.5),
+              0 0 30px rgba(16, 185, 129, 0.4),
+              0 0 50px rgba(16, 185, 129, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  transform: translateY(-2px) !important;
+}
+
+.driver-dashboard input[type="text"]:focus {
+  border-color: #10b981 !important;
+  box-shadow: 0 8px 35px rgba(16, 185, 129, 0.6),
+              0 0 40px rgba(16, 185, 129, 0.5),
+              0 0 60px rgba(16, 185, 129, 0.4),
+              0 0 0 4px rgba(16, 185, 129, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  background: linear-gradient(135deg, #ffffff 0%, #ecfdf5 100%) !important;
+  animation: floatSearch 3s ease-in-out infinite, pulseGlow 2s ease-in-out infinite !important;
+  transform: translateY(-3px) !important;
+  outline: none !important;
+}
+
+/* Search bar container - floating effect */
+.driver-dashboard .dashboard__header > div {
+  position: relative;
+}
+
+@keyframes floatSearch {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 8px 35px rgba(16, 185, 129, 0.6),
+                0 0 40px rgba(16, 185, 129, 0.5),
+                0 0 60px rgba(16, 185, 129, 0.4),
+                0 0 0 4px rgba(16, 185, 129, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  50% {
+    box-shadow: 0 10px 45px rgba(16, 185, 129, 0.7),
+                0 0 50px rgba(16, 185, 129, 0.6),
+                0 0 70px rgba(16, 185, 129, 0.5),
+                0 0 0 5px rgba(16, 185, 129, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* Search icon glow effect - Inside the search bar */
+.driver-dashboard .dashboard__header > div[style*="position: relative"] svg[viewBox="0 0 24 24"],
+.driver-dashboard .dashboard__header > div[style*="position: relative"] svg[stroke="currentColor"] {
+  position: absolute !important;
+  left: 1rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 20px !important;
+  height: 20px !important;
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6)) !important;
+  transition: all 0.3s ease !important;
+  z-index: 10 !important;
+  color: #10b981 !important;
+  pointer-events: none !important;
+  animation: iconPulse 2s ease-in-out infinite !important;
+}
+
+.driver-dashboard input[type="text"]:focus ~ svg,
+.driver-dashboard input[type="text"]:hover ~ svg,
+.driver-dashboard .dashboard__header > div:has(input[type="text"]:focus) svg,
+.driver-dashboard .dashboard__header > div:has(input[type="text"]:hover) svg {
+  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.8)) !important;
+  color: #059669 !important;
+  transform: translateY(-50%) scale(1.1) !important;
+}
+
+@keyframes iconPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.6));
+    opacity: 1;
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.8));
+    opacity: 0.9;
+  }
+}
+
+/* Search bar wrapper glow - using class-based approach */
+.driver-dashboard .dashboard__header > div[style*="position: relative"][style*="flex: 1"]::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.2) 0%, transparent 70%);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  z-index: 0;
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .driver-dashboard .dashboard__header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .driver-dashboard .panel h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+}
+

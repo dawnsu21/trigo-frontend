@@ -12,8 +12,10 @@ import {
 } from "../../services/driverService";
 import { fetchPlaces, searchPlaces } from "../../services/placesService";
 import EmergencyButton from "../../components/EmergencyButton";
-import FeedbackForm from "../../components/FeedbackForm";
+import PassengerRatingModal from "../../components/PassengerRatingModal";
+import NotificationBell from "../../components/NotificationBell";
 import "../../styles/dashboard.css";
+import "../../styles/driver-dashboard.css";
 
 const locationDefaults = {
   barangay: "",
@@ -98,6 +100,8 @@ export default function DriverDashboard() {
   const [showFeedback, setShowFeedback] = useState(false);
   const [rideForFeedback, setRideForFeedback] = useState(null);
   const [places, setPlaces] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allRides, setAllRides] = useState([]);
 
   const loadProfile = useCallback(async () => {
     try {
@@ -167,6 +171,7 @@ export default function DriverDashboard() {
       });
       
       setQueue(cleanedRides);
+      setAllRides(cleanedRides); // Store all rides for search
       
       // Clear error on successful load
       if (cleanedRides.length === 0) {
@@ -227,6 +232,44 @@ export default function DriverDashboard() {
       setPlaces([]);
     }
   }, []);
+
+  // Filter rides based on search query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      // When search is cleared, restore all rides
+      if (allRides.length > 0) {
+        setQueue(allRides);
+      }
+      return;
+    }
+
+    if (allRides.length === 0) {
+      return; // Wait for rides to load
+    }
+
+    const query = searchQuery.toLowerCase().trim();
+    const filtered = allRides.filter((ride) => {
+      const passengerName = (ride.passenger?.name || "").toLowerCase();
+      const passengerPhone = (ride.passenger?.phone || "").toLowerCase();
+      const pickup = (ride.pickup_place?.name || ride.pickup_address || "").toLowerCase();
+      const dropoff = (ride.dropoff_place?.name || ride.dropoff_address || "").toLowerCase();
+      const rideId = String(ride.id || "").toLowerCase();
+      const fare = String(ride.fare || "").toLowerCase();
+      const status = (ride.status || "").toLowerCase();
+
+      return (
+        passengerName.includes(query) ||
+        passengerPhone.includes(query) ||
+        pickup.includes(query) ||
+        dropoff.includes(query) ||
+        rideId.includes(query) ||
+        fare.includes(query) ||
+        status.includes(query)
+      );
+    });
+
+    setQueue(filtered);
+  }, [searchQuery, allRides]);
 
   useEffect(() => {
     if (token) {
@@ -470,8 +513,13 @@ export default function DriverDashboard() {
   }
 
   return (
-    <div className="dashboard">
-      <header className="dashboard__header">
+    <div className="dashboard driver-dashboard">
+      <header className="dashboard__header" style={{ 
+        display: "grid", 
+        gridTemplateColumns: "1fr auto 1fr",
+        gap: "1rem",
+        alignItems: "center"
+      }}>
         <div>
           <h2>Driver Console</h2>
           <p>
@@ -494,17 +542,140 @@ export default function DriverDashboard() {
             </span>
           )}
         </div>
-        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <div style={{ 
+          display: "flex", 
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "0.75rem",
+          minWidth: "400px",
+          maxWidth: "700px",
+          width: "100%",
+          position: "relative"
+        }}>
+          <div style={{ position: "relative", flex: 1, width: "100%" }}>
+            {/* Search Icon */}
+            <svg
+              style={{
+                position: "absolute",
+                left: "1rem",
+                top: "50%",
+                transform: "translateY(-50%)",
+                width: "20px",
+                height: "20px",
+                color: "var(--text-secondary)",
+                pointerEvents: "none",
+                zIndex: 1,
+              }}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              viewBox="0 0 24 24"
+            >
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              placeholder="Search rides by passenger, location, ride ID, or fare..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "1rem 1rem 1rem 3rem",
+                paddingRight: searchQuery ? "3rem" : "1rem",
+                borderRadius: "var(--radius-md)",
+                border: "1px solid var(--card-border)",
+                fontSize: "1rem",
+                fontFamily: "inherit",
+                outline: "none",
+                transition: "var(--transition)",
+                backgroundColor: "var(--card-bg)",
+                color: "var(--text-primary)",
+                fontWeight: "400",
+              }}
+              onFocus={(e) => {
+                e.target.style.borderColor = "var(--accent-primary)";
+                e.target.style.boxShadow = "0 0 0 3px rgba(59, 130, 246, 0.1)";
+              }}
+              onBlur={(e) => {
+                e.target.style.borderColor = "var(--card-border)";
+                e.target.style.boxShadow = "none";
+              }}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                style={{
+                  position: "absolute",
+                  right: "0.75rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: "0.25rem",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "var(--text-secondary)",
+                  fontSize: "1.5rem",
+                  lineHeight: 1,
+                  width: "24px",
+                  height: "24px",
+                  borderRadius: "50%",
+                  transition: "var(--transition)",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.color = "var(--text-primary)";
+                  e.target.style.backgroundColor = "var(--card-border)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.color = "var(--text-secondary)";
+                  e.target.style.backgroundColor = "transparent";
+                }}
+                title="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          {searchQuery && (
+            <div style={{
+              fontSize: "0.875rem",
+              color: "var(--text-secondary)",
+              whiteSpace: "nowrap",
+              padding: "0.5rem 0",
+              fontWeight: "500",
+            }}>
+              {queue.length} result{queue.length !== 1 ? 's' : ''}
+            </div>
+          )}
+        </div>
+        <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", justifyContent: "flex-end" }}>
           <EmergencyButton token={token} userRole="driver" />
+          <NotificationBell token={token} />
+          <button 
+            onClick={() => navigate('/driver/feedbacks')} 
+            className="secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            Feedback
+          </button>
+          <button 
+            onClick={() => navigate('/driver/trip-history')} 
+            className="secondary"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            Trip History
+          </button>
           <button 
             onClick={() => navigate('/driver/profile')} 
             className="secondary"
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
             👤 Profile
-          </button>
-          <button onClick={loadProfile} className="secondary" disabled={busy}>
-            Refresh Status
           </button>
           <button onClick={logout} className="secondary">
             Logout
@@ -787,39 +958,7 @@ export default function DriverDashboard() {
 
       <section className="dashboard__grid">
         <article className="panel">
-          <h3>Online Status</h3>
-          <p className="panel__description">
-            Toggle your availability to receive ride requests
-          </p>
-          <div className="details">
-            <div>
-              <dt>Current Status</dt>
-              <dd>
-                <strong
-                  className={availability ? "text-success" : "text-muted"}
-                >
-                  {availability
-                    ? "🟢 Online - Receiving Rides"
-                    : "🔴 Offline - Not Available"}
-                </strong>
-              </dd>
-            </div>
-          </div>
-          <button onClick={toggleAvailability} disabled={busy || needsApproval}>
-            {busy ? "Updating..." : availability ? "Go Offline" : "Go Online"}
-          </button>
-          {needsApproval && (
-            <p
-              className="text-muted"
-              style={{ marginTop: "0.5rem", fontSize: "0.875rem" }}
-            >
-              You must be approved by an administrator before going online.
-            </p>
-          )}
-        </article>
-
-        <article className="panel">
-          <h3>Update Your Location</h3>
+          <h3>📍 Update Your Location</h3>
           <p className="panel__description">
             Keep your location updated so passengers can find you. Your location will persist until you manually update it.
           </p>
@@ -870,12 +1009,44 @@ export default function DriverDashboard() {
             </p>
           </form>
         </article>
+
+        <article className="panel">
+          <h3>🟢 Online Status</h3>
+          <p className="panel__description">
+            Toggle your availability to receive ride requests
+          </p>
+          <div className="details">
+            <div>
+              <dt>Current Status</dt>
+              <dd>
+                <strong
+                  className={availability ? "text-success" : "text-muted"}
+                >
+                  {availability
+                    ? "🟢 Online - Receiving Rides"
+                    : "🔴 Offline - Not Available"}
+                </strong>
+              </dd>
+            </div>
+          </div>
+          <button onClick={toggleAvailability} disabled={busy || needsApproval}>
+            {busy ? "Updating..." : availability ? "Go Offline" : "Go Online"}
+          </button>
+          {needsApproval && (
+            <p
+              className="text-muted"
+              style={{ marginTop: "0.5rem", fontSize: "0.875rem" }}
+            >
+              You must be approved by an administrator before going online.
+            </p>
+          )}
+        </article>
       </section>
 
       <section className="panel">
         <div className="panel__header">
           <div>
-            <h3>Available Rides</h3>
+            <h3>🚕 Available Rides</h3>
             <p className="panel__description">
               View and manage ride requests from passengers
             </p>
@@ -1239,31 +1410,30 @@ export default function DriverDashboard() {
         ))}
       </section>
 
-      {/* Feedback Form */}
+      {/* Passenger Rating Modal */}
       {showFeedback && rideForFeedback && (
-        <section className="panel">
-          <FeedbackForm
-            token={token}
-            rideId={rideForFeedback.id}
-            onSuccess={() => {
-              setShowFeedback(false);
-              setRideForFeedback(null);
-              setSuccess("Thank you for your feedback!");
-              setTimeout(() => setSuccess(""), 3000);
-            }}
-            onSkip={() => {
-              setShowFeedback(false);
-              setRideForFeedback(null);
-            }}
-          />
-        </section>
+        <PassengerRatingModal
+          token={token}
+          rideId={rideForFeedback.id}
+          passengerName={rideForFeedback.passenger?.name || rideForFeedback.passenger?.user?.name}
+          onSuccess={() => {
+            setShowFeedback(false);
+            setRideForFeedback(null);
+            setSuccess("Thank you for rating your passenger!");
+            setTimeout(() => setSuccess(""), 3000);
+          }}
+          onClose={() => {
+            setShowFeedback(false);
+            setRideForFeedback(null);
+          }}
+        />
       )}
 
       {/* Trip History Section */}
       <section className="panel">
         <div className="panel__header">
           <div>
-            <h3>Trip History</h3>
+            <h3>📋 Trip History</h3>
             <p className="panel__description">
               View all your completed and past rides
             </p>

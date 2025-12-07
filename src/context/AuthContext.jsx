@@ -4,7 +4,11 @@ import { apiRequest } from "../services/apiClient";
 import { AuthContext } from "./auth-context";
 
 const tokenFromStorage = () => localStorage.getItem(STORAGE_KEYS.token) || "";
-const roleFromStorage = () => localStorage.getItem(STORAGE_KEYS.role) || "";
+const roleFromStorage = () => {
+  const role = localStorage.getItem(STORAGE_KEYS.role) || "";
+  // Normalize role to lowercase for consistency
+  return role ? role.toLowerCase() : "";
+};
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(tokenFromStorage);
@@ -42,12 +46,18 @@ export function AuthProvider({ children }) {
         // Backend response structure: { token, user, role, roles }
         const token = data?.token;
         const user = data?.user;
-        const role = data?.role || data?.roles?.[0] || "";
+        // Get role from various possible locations, normalize to lowercase
+        let role = data?.role || data?.roles?.[0] || data?.user?.role || "";
+        // Normalize role to lowercase for consistency
+        if (role) {
+          role = role.toLowerCase();
+        }
 
         console.log("[Auth] Extracted values:", {
           token: !!token,
           role,
           hasUser: !!user,
+          rawData: data,
         });
 
         if (!token) {
@@ -60,7 +70,7 @@ export function AuthProvider({ children }) {
 
         persistAuth(token, role);
         setUser(user || null);
-        console.log("[Auth] Login successful, token saved");
+        console.log("[Auth] Login successful, token saved, role:", role);
         return { ...data, role }; // Ensure role is included in return value
       } catch (error) {
         // Enhanced error logging for login failures
